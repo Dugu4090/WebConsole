@@ -1,0 +1,174 @@
+<div class="files-container">
+    <div class="files-header">
+        <div class="breadcrumb">
+            <span class="breadcrumb-item" (click)="navigateToRoot()">
+                <i class="fas fa-home"></i> /
+            </span>
+            <span *ngFor="let part of pathParts; let i = index" class="breadcrumb-item">
+                <span (click)="navigateToPath(i)" class="clickable">{{part}}</span>
+                <span *ngIf="i < pathParts.length - 1">/</span>
+            </span>
+        </div>
+        <div class="toolbar">
+            <button class="btn btn-secondary btn-sm" (click)="goUp()" [disabled]="currentPath === serverDirectory" title="{{'files.go_up' | translate}}">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            <button class="btn btn-secondary btn-sm" (click)="refreshFiles()" title="{{'files.refresh' | translate}}">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+            <button class="btn btn-primary btn-sm" (click)="showCreateFolderModal = true" title="{{'files.create_folder' | translate}}">
+                <i class="fas fa-folder-plus"></i>
+            </button>
+            <button class="btn btn-primary btn-sm" (click)="showCreateFileModal = true" title="{{'files.create_file' | translate}}">
+                <i class="fas fa-file-plus"></i>
+            </button>
+            <button class="btn btn-primary btn-sm" (click)="triggerFileInput()" title="{{'files.upload' | translate}}">
+                <i class="fas fa-upload"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="files-list" *ngIf="!editingFile">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th style="width: 40%">{{'files.name' | translate}}</th>
+                    <th style="width: 15%">{{'files.size' | translate}}</th>
+                    <th style="width: 25%">{{'files.last_modified' | translate}}</th>
+                    <th style="width: 20%">{{'files.actions' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let file of files" 
+                    (click)="file.is_folder ? navigateToFolder(file) : selectFile(file)"
+                    (contextmenu)="onContextMenu($event, file)"
+                    [class.clickable]="true"
+                    [class.folder-row]="file.is_folder">
+                    <td>
+                        <i class="fas {{getFileIcon(file)}}" [class.folder-icon]="file.is_folder"></i>
+                        {{file.name}}
+                    </td>
+                    <td>{{formatFileSize(file.size)}}</td>
+                    <td>{{file.last_modified | date:'medium'}}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" (click)="downloadFile(file, $event)" *ngIf="!file.is_folder" title="{{'files.download' | translate}}">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" (click)="deleteFile(file, $event)" title="{{'files.delete' | translate}}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="files.length === 0">
+                    <td colspan="4" class="text-center text-muted">{{'files.empty_folder' | translate}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="file-editor" *ngIf="editingFile">
+        <div class="editor-header">
+            <span class="editor-title">
+                <i class="fas fa-file-alt"></i> {{editingFile.name}}
+            </span>
+            <div class="editor-actions">
+                <button class="btn btn-success btn-sm" (click)="saveFile()" [disabled]="!fileContentChanged">
+                    <i class="fas fa-save"></i> {{'files.save' | translate}}
+                </button>
+                <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">
+                    <i class="fas fa-times"></i> {{'files.cancel' | translate}}
+                </button>
+            </div>
+        </div>
+        <div class="editor-content">
+            <textarea #editorTextarea 
+                      class="form-control code-editor" 
+                      [(ngModel)]="fileContent" 
+                      (ngModelChange)="onContentChange()"
+                      spellcheck="false"></textarea>
+        </div>
+    </div>
+
+    <div class="context-menu" *ngIf="contextMenuVisible" [style.top.px]="contextMenuTop" [style.left.px]="contextMenuLeft">
+        <div class="context-menu-item" (click)="openFile()">
+            <i class="fas fa-edit"></i> {{'files.open' | translate}}
+        </div>
+        <div class="context-menu-item" (click)="downloadSelectedFile()" *ngIf="!selectedContextFile?.is_folder">
+            <i class="fas fa-download"></i> {{'files.download' | translate}}
+        </div>
+        <div class="context-menu-item" (click)="renameSelectedFile()">
+            <i class="fas fa-edit"></i> {{'files.rename' | translate}}
+        </div>
+        <div class="context-menu-item text-danger" (click)="deleteSelectedFile()">
+            <i class="fas fa-trash"></i> {{'files.delete' | translate}}
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" (click)="copyPath()">
+            <i class="fas fa-copy"></i> {{'files.copy_path' | translate}}
+        </div>
+    </div>
+
+    <div class="modal-backdrop" *ngIf="showCreateFolderModal || showRenameModal || showDeleteConfirmModal" (click)="closeAllModals()"></div>
+    
+    <div class="modal custom-modal" *ngIf="showCreateFolderModal">
+        <div class="modal-header">
+            <h5 class="modal-title">{{'files.create_folder' | translate}}</h5>
+            <button type="button" class="close" (click)="showCreateFolderModal = false">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="text" class="form-control" [(ngModel)]="newFolderName" placeholder="{{'files.folder_name' | translate}}" (keyup.enter)="createFolder()">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="showCreateFolderModal = false">{{'files.cancel' | translate}}</button>
+            <button type="button" class="btn btn-primary" (click)="createFolder()">{{'files.create' | translate}}</button>
+        </div>
+    </div>
+
+    <div class="modal custom-modal" *ngIf="showCreateFileModal">
+        <div class="modal-header">
+            <h5 class="modal-title">{{'files.create_file' | translate}}</h5>
+            <button type="button" class="close" (click)="showCreateFileModal = false">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="text" class="form-control" [(ngModel)]="newFileName" placeholder="{{'files.file_name' | translate}}" (keyup.enter)="createFile()">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="showCreateFileModal = false">{{'files.cancel' | translate}}</button>
+            <button type="button" class="btn btn-primary" (click)="createFile()">{{'files.create' | translate}}</button>
+        </div>
+    </div>
+
+    <div class="modal custom-modal" *ngIf="showRenameModal">
+        <div class="modal-header">
+            <h5 class="modal-title">{{'files.rename' | translate}}</h5>
+            <button type="button" class="close" (click)="showRenameModal = false">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="text" class="form-control" [(ngModel)]="renameNewName" placeholder="{{'files.new_name' | translate}}" (keyup.enter)="renameFile()">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="showRenameModal = false">{{'files.cancel' | translate}}</button>
+            <button type="button" class="btn btn-primary" (click)="renameFile()">{{'files.rename' | translate}}</button>
+        </div>
+    </div>
+
+    <div class="modal custom-modal" *ngIf="showDeleteConfirmModal">
+        <div class="modal-header">
+            <h5 class="modal-title">{{'files.delete_confirm_title' | translate}}</h5>
+            <button type="button" class="close" (click)="showDeleteConfirmModal = false">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>{{'files.delete_confirm_message' | translate}} <strong>{{selectedContextFile?.name}}</strong>?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="showDeleteConfirmModal = false">{{'files.cancel' | translate}}</button>
+            <button type="button" class="btn btn-danger" (click)="confirmDelete()">{{'files.delete' | translate}}</button>
+        </div>
+    </div>
+
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
