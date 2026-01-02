@@ -296,81 +296,103 @@ export class ConsoleComponent implements OnInit, AfterViewInit, OnDestroy {
 	 * @param time Time, if applicable
 	 */
 	private writeToWebConsole(msg: string, time: string) {
-		this.keepScrollDown = this.consoleDiv?.nativeElement.scrollHeight - this.consoleDiv?.nativeElement.scrollTop === this.consoleDiv?.nativeElement.clientHeight;
+		this.keepScrollDown = this.consoleDiv?.nativeElement.scrollHeight - this.consoleDiv?.nativeElement.scrollHeight === this.consoleDiv?.nativeElement.clientHeight;
 
-		//Write to div, replacing < to &lt; (to avoid XSS) and replacing new line to br.
-		msg = msg.replace(/</g, "&lt;");
-		msg = msg.replace(/(?:\r\n|\r|\n)/g, "<br>");
+		//Store original message for health report detection
+		const originalMsg = msg;
 
-		//Color filter for MC codes.
-		msg = msg.replace(/§0/g, "<span style='color: #000000;'>"); //&0
-		msg = msg.replace(/§1/g, "<span style='color: #0000AA;'>"); //&1
-		msg = msg.replace(/§2/g, "<span style='color: #00AA00;'>"); //&2
-		msg = msg.replace(/§3/g, "<span style='color: #00AAAA;'>"); //&3
-		msg = msg.replace(/§4/g, "<span style='color: #AA0000;'>"); //&4
-		msg = msg.replace(/§5/g, "<span style='color: #AA00AA;'>"); //&5
-		msg = msg.replace(/§6/g, "<span style='color: #FFAA00;'>"); //&6
-		msg = msg.replace(/§7/g, "<span style='color: #AAAAAA;'>"); //&7
-		msg = msg.replace(/§8/g, "<span style='color: #555555;'>"); //&8
-		msg = msg.replace(/§9/g, "<span style='color: #5555FF;'>"); //&9
-		msg = msg.replace(/§a/g, "<span style='color: #55FF55;'>"); //&a
-		msg = msg.replace(/§b/g, "<span style='color: #55FFFF;'>"); //&b
-		msg = msg.replace(/§c/g, "<span style='color: #FF5555;'>"); //&c
-		msg = msg.replace(/§d/g, "<span style='color: #FF55FF;'>"); //&d
-		msg = msg.replace(/§e/g, "<span style='color: #FFFF55;'>"); //&e
-		msg = msg.replace(/§f/g, "<span style='color: #FFFFFF;'>"); //&f
-
-		msg = msg.replace(/§l/g, "<span style='font-weight:bold;'>"); //&l
-		msg = msg.replace(/§m/g, "<span style='text-decoration: line-through;'>"); //&m
-		msg = msg.replace(/§n/g, "<span style='text-decoration: underline;'>"); //&n
-		msg = msg.replace(/§o/g, "<span style='font-style: italic;'>"); //&o
-
-		msg = msg.replace(/§r/g, "</span>");  //&r
-
-		//Color filter for MC 1.18 (Also easy :D)
-		msg = msg.replace(/0/g, "<span style='color: #000000;'>"); //&0
-		msg = msg.replace(/1/g, "<span style='color: #0000AA;'>"); //&1
-		msg = msg.replace(/2/g, "<span style='color: #00AA00;'>"); //&2
-		msg = msg.replace(/3/g, "<span style='color: #00AAAA;'>"); //&3
-		msg = msg.replace(/4/g, "<span style='color: #AA0000;'>"); //&4
-		msg = msg.replace(/5/g, "<span style='color: #AA00AA;'>"); //&5
-		msg = msg.replace(/6/g, "<span style='color: #FFAA00;'>"); //&6
-		msg = msg.replace(/7/g, "<span style='color: #AAAAAA;'>"); //&7
-		msg = msg.replace(/8/g, "<span style='color: #555555;'>"); //&8
-		msg = msg.replace(/9/g, "<span style='color: #5555FF;'>"); //&9
-		msg = msg.replace(/a/g, "<span style='color: #55FF55;'>"); //&a
-		msg = msg.replace(/b/g, "<span style='color: #55FFFF;'>"); //&b
-		msg = msg.replace(/c/g, "<span style='color: #FF5555;'>"); //&c
-		msg = msg.replace(/d/g, "<span style='color: #FF55FF;'>"); //&d
-		msg = msg.replace(/e/g, "<span style='color: #FFFF55;'>"); //&e
-		msg = msg.replace(/f/g, "<span style='color: #FFFFFF;'>"); //&f
-
-		msg = msg.replace(/l/g, "<span style='font-weight:bold;'>"); //&l
-		msg = msg.replace(/m/g, "<span style='text-decoration: line-through;'>"); //&m
-		msg = msg.replace(/n/g, "<span style='text-decoration: underline;'>"); //&n
-		msg = msg.replace(/o/g, "<span style='font-style: italic;'>"); //&o
-
-		msg = msg.replace(/r/g, "</span>");  //&r
-
-		// ANSI Processing
-		var ansi_up = new AnsiUp();
-    	msg = ansi_up.ansi_to_html(msg);
-		
-		//Append datetime if enabled
-		if (this.storageService.getSetting(SettingsEnum.DateTimePrefix)) {
-			if (typeof time !== 'undefined' && time !== null) //if time is present and not null
-				msg = "[" + time + "] " + msg;
-			else if (typeof time !== 'undefined' && time === null) //if time is present and null
-				null; //no time (is already printed)
-			else
-				msg = "[" + new Date().toLocaleTimeString() + "] " + msg;
+		//Check for health report
+		if (msg.includes('Generating server health report') || msg.includes('TPS from last') || msg.includes('Tick durations') || msg.includes('CPU usage') || msg.includes('Memory usage') || msg.includes('Network usage')) {
+			this.consoleHtml += '<div class="health-report">' + this.formatMcCodes(msg) + '</div>';
+			return;
 		}
 
+		//Detect log level and format
+		let logLevel = 'info';
+		let threadName = '';
+		
+		if (msg.includes('[ERROR]') || msg.includes('[SEVERE]')) {
+			logLevel = 'error';
+			msg = msg.replace('[ERROR]', '<span class="log-level log-level-error">ERROR</span>');
+			msg = msg.replace('[SEVERE]', '<span class="log-level log-level-error">SEVERE</span>');
+		} else if (msg.includes('[WARN]') || msg.includes('[WARNING]')) {
+			logLevel = 'warn';
+			msg = msg.replace('[WARN]', '<span class="log-level log-level-warn">WARN</span>');
+			msg = msg.replace('[WARNING]', '<span class="log-level log-level-warn">WARNING</span>');
+		} else if (msg.includes('[DEBUG]') || msg.includes('[DEBUG]')) {
+			logLevel = 'debug';
+			msg = msg.replace('[DEBUG]', '<span class="log-level log-level-debug">DEBUG</span>');
+		} else if (msg.includes('[INFO]')) {
+			logLevel = 'info';
+			msg = msg.replace('[INFO]', '<span class="log-level log-level-info">INFO</span>');
+		} else if (msg.includes('[SUCCESS]') || msg.includes('Done')) {
+			logLevel = 'success';
+		}
+
+		//Extract thread name from pattern like [Thread name/INFO]
+		const threadMatch = msg.match(/\[([^\]]+)\/(\w+)\]/);
+		if (threadMatch) {
+			threadName = threadMatch[1];
+			msg = msg.replace(threadMatch[0], `<span class="thread-name">[${threadMatch[1]}]</span>`);
+		}
+
+		//Extract plugin tag from pattern like [PluginName]
+		const pluginMatch = msg.match(/\[([^\]]+)\](?=\s*:?\s*[\[⚡🔧🛠️✨💡])/);
+		if (pluginMatch) {
+			msg = msg.replace(pluginMatch[0], `<span class="plugin-tag">[${pluginMatch[1]}]</span>`);
+		}
+
+		//Format Minecraft color codes
+		msg = this.formatMcCodes(msg);
+
+		//Build the log line HTML
+		let logLineHtml = '<div class="log-line">';
+		
+		//Add timestamp if enabled
+		if (this.storageService.getSetting(SettingsEnum.DateTimePrefix)) {
+			const displayTime = time || new Date().toLocaleTimeString();
+			logLineHtml += `<span class="log-timestamp">[${displayTime}]</span>`;
+		}
+		
+		logLineHtml += msg + '</div>';
+
 		//Append HTML
-		const spanCount = (msg.match(/<span /g) || []).length; //Number of times a color is applied
-		const spanCloseCount = (msg.match(/<\/span> /g) || []).length; //Number of already existing </span>
-		const numberOfUnclosedSpans: number = spanCount - spanCloseCount; //Number of </span> pending to be closed
-		this.consoleHtml += msg + ("</span>".repeat(numberOfUnclosedSpans)) + "<br>"; //Append to console the message, plus the required </span>'s, plus a line break
+		this.consoleHtml += logLineHtml;
+	}
+
+	private formatMcCodes(msg: string): string {
+		//Replace < to &lt; (to avoid XSS) but preserve color codes
+		msg = msg.replace(/</g, "&lt;");
+
+		//Minecraft color codes
+		msg = msg.replace(/§0/g, "</span><span class='mc-color-0'>");
+		msg = msg.replace(/§1/g, "</span><span class='mc-color-1'>");
+		msg = msg.replace(/§2/g, "</span><span class='mc-color-2'>");
+		msg = msg.replace(/§3/g, "</span><span class='mc-color-3'>");
+		msg = msg.replace(/§4/g, "</span><span class='mc-color-4'>");
+		msg = msg.replace(/§5/g, "</span><span class='mc-color-5'>");
+		msg = msg.replace(/§6/g, "</span><span class='mc-color-6'>");
+		msg = msg.replace(/§7/g, "</span><span class='mc-color-7'>");
+		msg = msg.replace(/§8/g, "</span><span class='mc-color-8'>");
+		msg = msg.replace(/§9/g, "</span><span class='mc-color-9'>");
+		msg = msg.replace(/§a/g, "</span><span class='mc-color-a'>");
+		msg = msg.replace(/§b/g, "</span><span class='mc-color-b'>");
+		msg = msg.replace(/§c/g, "</span><span class='mc-color-c'>");
+		msg = msg.replace(/§d/g, "</span><span class='mc-color-d'>");
+		msg = msg.replace(/§e/g, "</span><span class='mc-color-e'>");
+		msg = msg.replace(/§f/g, "</span><span class='mc-color-f'>");
+
+		//Formatting codes
+		msg = msg.replace(/§l/g, "</span><span class='mc-bold'>");
+		msg = msg.replace(/§m/g, "</span><span class='mc-strikethrough'>");
+		msg = msg.replace(/§n/g, "</span><span class='mc-underline'>");
+		msg = msg.replace(/§o/g, "</span><span class='mc-italic'>");
+		msg = msg.replace(/§r/g, "</span><span class='mc-color-f'>");
+
+		//Wrap with default color
+		msg = "<span class='mc-color-f'>" + msg + "</span>";
+
+		return msg;
 	}
 
 	/**
