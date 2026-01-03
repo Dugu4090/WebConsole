@@ -51,7 +51,6 @@
             padding: 40px;
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
         
         .login-header {
@@ -71,11 +70,6 @@
             margin-bottom: 8px;
         }
         
-        .login-header p {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-        
         .form-group {
             margin-bottom: 20px;
         }
@@ -83,13 +77,12 @@
         .form-group label {
             display: block;
             font-size: 14px;
-            font-weight: 500;
             margin-bottom: 8px;
         }
         
         .form-group input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 12px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -97,30 +90,22 @@
             font-size: 14px;
         }
         
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-        }
-        
         .btn {
             width: 100%;
-            padding: 12px 14px;
+            padding: 12px;
             border-radius: 6px;
             font-size: 14px;
-            font-weight: 500;
             cursor: pointer;
             border: none;
             background: var(--accent-blue);
             color: white;
+            margin-bottom: 10px;
         }
-        
-        .btn:hover { opacity: 0.9; }
         
         .btn-secondary {
             background: var(--bg-tertiary);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
-            margin-top: 10px;
         }
         
         .servers-list {
@@ -129,43 +114,35 @@
             padding-top: 20px;
         }
         
-        .servers-list h3 {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-        }
-        
         .server-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px;
+            padding: 10px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             margin-bottom: 8px;
         }
         
-        .server-item button {
-            padding: 6px 10px;
-            background: transparent;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            color: var(--text-secondary);
-            cursor: pointer;
+        .server-btn {
+            padding: 5px 10px;
             font-size: 12px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-secondary);
             margin-left: 5px;
         }
         
         .theme-toggle {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             padding: 10px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             cursor: pointer;
-            color: var(--text-primary);
         }
         
         .hidden { display: none; }
@@ -180,37 +157,37 @@
         <div class="login-header">
             <i class="fas fa-terminal"></i>
             <h1>WebConsole</h1>
-            <p>Connect to your Minecraft server</p>
+            <p style="color: var(--text-secondary)">Connect to your server</p>
         </div>
         
-        <form id="login-form">
+        <form id="login-form" onsubmit="return connectServer(event)">
             <div class="form-group">
-                <label>Server Address</label>
+                <label>Server IP</label>
                 <input type="text" id="server-host" placeholder="45.59.132.155" required>
             </div>
             <div class="form-group">
-                <label>WebSocket Port</label>
+                <label>Port</label>
                 <input type="number" id="server-port" placeholder="8080" value="8080" required>
             </div>
             <button type="submit" class="btn">Connect</button>
-            <button type="button" class="btn btn-secondary" onclick="saveServer()">Save as Server</button>
+            <button type="button" class="btn btn-secondary" onclick="saveServer()">Save Server</button>
         </form>
         
         <div class="servers-list">
-            <h3>Saved Servers</h3>
+            <h3 style="color: var(--text-secondary); font-size: 14px; margin-bottom: 10px;">Saved Servers</h3>
             <div id="servers-container"></div>
         </div>
     </div>
     
     <div class="hidden" id="dashboard-view">
-        <iframe id="dashboard-frame" style="width:100%;height:calc(100vh - 40px);border:none;border-radius:8px;"></iframe>
+        <iframe id="dashboard-frame" style="width:100vw;height:100vh;border:none;"></iframe>
     </div>
-    
+
     <script>
-    let ws = null;
+    var ws = null;
     
     function initTheme() {
-        var saved = localStorage.getItem('webconsole-theme') || 'dark';
+        var saved = localStorage.getItem('webconsole-theme');
         if (saved === 'light') {
             document.body.classList.add('light-mode');
             document.getElementById('theme-icon').className = 'fas fa-sun';
@@ -232,7 +209,11 @@
     }
     
     function getServers() {
-        return JSON.parse(localStorage.getItem('webconsole-servers') || '[]');
+        var data = localStorage.getItem('webconsole-servers');
+        if (data) {
+            return JSON.parse(data);
+        }
+        return [];
     }
     
     function saveServers(servers) {
@@ -244,21 +225,33 @@
         var servers = getServers();
         var container = document.getElementById('servers-container');
         if (servers.length === 0) {
-            container.innerHTML = '<p style="color:var(--text-secondary);font-size:13px;">No saved servers</p>';
+            container.innerHTML = '<p style="color: var(--text-secondary); font-size: 13px;">No saved servers</p>';
             return;
         }
-        container.innerHTML = servers.map(function(s, i) {
-            return '<div class="server-item"><span>' + s.host + ':' + s.port + '</span><div><button onclick="connectToServer(' + i + ')">Connect</button><button onclick="deleteServer(' + i + ')" style="color:var(--accent-red)">Delete</button></div></div>';
-        }).join('');
+        var html = '';
+        for (var i = 0; i < servers.length; i++) {
+            var s = servers[i];
+            html += '<div class="server-item">';
+            html += '<span>' + s.host + ':' + s.port + '</span>';
+            html += '<div>';
+            html += '<button class="server-btn" onclick="connectToIndex(' + i + ')">Connect</button>';
+            html += '<button class="server-btn" onclick="deleteServer(' + i + ')" style="color: var(--accent-red)">Delete</button>';
+            html += '</div></div>';
+        }
+        container.innerHTML = html;
     }
     
     function saveServer() {
         var host = document.getElementById('server-host').value.trim();
         var port = document.getElementById('server-port').value.trim();
-        if (!host || !port) { alert('Please enter server address and port'); return; }
+        if (!host || !port) {
+            alert('Please enter server IP and port');
+            return;
+        }
         var servers = getServers();
         servers.push({host: host, port: port});
         saveServers(servers);
+        alert('Server saved!');
     }
     
     function deleteServer(index) {
@@ -267,42 +260,57 @@
         saveServers(servers);
     }
     
-    function connectToServer(index) {
+    function connectToIndex(index) {
         var servers = getServers();
-        var server = servers[index];
-        document.getElementById('server-host').value = server.host;
-        document.getElementById('server-port').value = server.port;
-        connectToServerDirect(server.host, server.port);
+        var s = servers[index];
+        document.getElementById('server-host').value = s.host;
+        document.getElementById('server-port').value = s.port;
+        connectServer(null);
     }
     
-    function connectToServerDirect(host, port) {
+    function connectServer(e) {
+        if (e) e.preventDefault();
+        var host = document.getElementById('server-host').value.trim();
+        var port = document.getElementById('server-port').value.trim();
+        if (!host || !port) {
+            alert('Please enter server IP and port');
+            return false;
+        }
+        
         var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         var wsUrl = protocol + '//' + host + ':' + port;
+        
         ws = new WebSocket(wsUrl);
-        ws.onopen = function() { showDashboard(host, port); };
-        ws.onerror = function() { alert('Failed to connect. Check address and port.'); };
+        
+        ws.onopen = function() {
+            showDashboard(host, port);
+        };
+        
+        ws.onerror = function(error) {
+            alert('Cannot connect to ' + host + ':' + port + '. Check if server is running and port is correct.');
+        };
+        
+        return false;
     }
     
     function showDashboard(host, port) {
         document.getElementById('login-view').classList.add('hidden');
         document.getElementById('dashboard-view').classList.remove('hidden');
+        
         var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        var html = getDashboardHTML(host, port, protocol);
+        var wsUrl = protocol + '//' + host + ':' + port;
+        
+        var html = getDashboardHTML(host, port, wsUrl);
         var blob = new Blob([html], {type: 'text/html'});
         document.getElementById('dashboard-frame').src = URL.createObjectURL(blob);
     }
     
-    function getDashboardHTML(host, port, protocol) {
-        return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>WebConsole - ' + host + ':' + port + '</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><style>:root{--bg-primary:#0d1117;--bg-secondary:#161b22;--bg-tertiary:#21262d;--border-color:#30363d;--text-primary:#c9d1d9;--text-secondary:#8b949e;--accent-blue:#58a6ff;--accent-green:#3fb950;--accent-yellow:#d29922;--accent-red:#f85149;--mc-black:#000000;--mc-dark-blue:#0000AA;--mc-dark-green:#00AA00;--mc-dark-aqua:#00AAAA;--mc-dark-red:#AA0000;--mc-dark-purple:#AA00AA;--mc-gold:#FFAA00;--mc-gray:#AAAAAA;--mc-dark-gray:#555555;--mc-blue:#5555FF;--mc-green:#55FF55;--mc-aqua:#55FFFF;--mc-red:#FF5555;--mc-purple:#FF55FF;--mc-yellow:#FFFF55;--mc-white:#FFFFFF;--console-bg:#0d1117}*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh}.container{max-width:1400px;margin:0 auto;padding:20px}.header{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:var(--bg-secondary);border-bottom:1px solid var(--border-color);margin-bottom:20px;border-radius:8px}.header h1{font-size:20px;font-weight:600}.btn{padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer;border:none;background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color)}.btn-primary{background:var(--accent-blue);color:white;border:none}.status-badge{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600}.status-connected{background:rgba(63,185,80,0.15);color:var(--accent-green)}.status-disconnected{background:rgba(248,81,73,0.15);color:var(--accent-red)}.status-connecting{background:rgba(86,140,253,0.15);color:var(--accent-blue)}.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}.stat-card{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;padding:15px}.stat-card h3{color:var(--text-secondary);font-size:11px;text-transform:uppercase;margin-bottom:8px}.stat-value{font-size:24px;font-weight:600}.progress-bar{width:100%;height:6px;background:var(--bg-tertiary);border-radius:3px;margin-top:8px}.progress-fill{height:100%;border-radius:3px;transition:width 0.3s ease;background:var(--accent-green)}.main-content{display:grid;grid-template-columns:1fr;gap:20px}@media(min-width:1024px){.main-content{grid-template-columns:2fr 1fr}}.panel{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;overflow:hidden}.panel-header{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;border-bottom:1px solid var(--border-color)}.panel-title{font-size:14px;font-weight:600}.console-output{height:350px;overflow-y:auto;background:var(--console-bg);padding:12px;font-family:"JetBrains Mono",monospace;font-size:12px;line-height:1.5}.console-line{padding:2px 0;word-break:break-all}.timestamp{color:var(--text-secondary);margin-right:6px}.log-level{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-right:6px;min-width:45px;text-align:center;background:rgba(86,140,253,0.15);color:var(--accent-blue)}.log-warn{background:rgba(187,128,9,0.15);color:var(--accent-yellow)}.log-error{background:rgba(248,81,73,0.15);color:var(--accent-red)}.mc-color-0{color:var(--mc-black)}.mc-color-1{color:var(--mc-dark-blue)}.mc-color-2{color:var(--mc-dark-green)}.mc-color-3{color:var(--mc-dark-aqua)}.mc-color-4{color:var(--mc-dark-red)}.mc-color-5{color:var(--mc-dark-purple)}.mc-color-6{color:var(--mc-gold)}.mc-color-7{color:var(--mc-gray)}.mc-color-8{color:var(--mc-dark-gray)}.mc-color-9{color:var(--mc-blue)}.mc-color-a{color:var(--mc-green)}.mc-color-b{color:var(--mc-aqua)}.mc-color-c{color:var(--mc-red)}.mc-color-d{color:var(--mc-purple)}.mc-color-e{color:var(--mc-yellow)}.mc-color-f{color:var(--mc-white)}.command-input-wrapper{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border-color)}.command-input{flex:1;padding:10px 14px;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-family:monospace;font-size:13px}.command-input:focus{outline:none;border-color:var(--accent-blue)}.players-list{max-height:200px;overflow-y:auto}.player-item{display:flex;justify-content:space-between;padding:10px 15px;border-bottom:1px solid var(--border-color)}.file-manager{padding:15px}.breadcrumb{display:flex;gap:6px;margin-bottom:12px;padding:8px 12px;background:var(--bg-tertiary);border-radius:6px;font-size:12px}.breadcrumb-item{color:var(--accent-blue);cursor:pointer}.file-toolbar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}.file-table{width:100%;border-collapse:collapse}.file-table th,.file-table td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border-color);font-size:12px}.file-table th{color:var(--text-secondary);font-size:10px;text-transform:uppercase;font-weight:600}.file-row{cursor:pointer}.file-row:hover{background:var(--bg-tertiary)}.file-folder{color:var(--mc-gold);margin-right:6px}.file-actions{display:flex;gap:4px}.file-action-btn{padding:4px 8px;background:transparent;border:1px solid var(--border-color);border-radius:4px;color:var(--text-secondary);cursor:pointer;font-size:10px}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg-primary)}::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:3px}</style></head><body><div class="container"><div class="header"><h1><i class="fas fa-server"></i> ' + host + ':' + port + '</h1><span id="connection-badge" class="status-badge status-connecting">Connecting...</span></div><div class="stats-grid"><div class="stat-card"><h3>Players</h3><div class="stat-value" id="players-count">0 / 0</div><div class="progress-bar"><div class="progress-fill" id="players-progress" style="width:0%"></div></div></div><div class="stat-card"><h3>CPU</h3><div class="stat-value" id="cpu-usage">0%</div><div class="progress-bar"><div class="progress-fill" id="cpu-progress" style="width:0%"></div></div></div><div class="stat-card"><h3>RAM</h3><div class="stat-value" id="ram-usage">0 MB</div><div class="progress-bar"><div class="progress-fill" id="ram-progress" style="width:0%"></div></div></div><div class="stat-card"><h3>TPS</h3><div class="stat-value" id="tps-value">20.0</div><div class="progress-bar"><div class="progress-fill" id="tps-progress" style="width:100%"></div></div></div></div><div class="main-content"><div class="panel"><div class="panel-header"><span class="panel-title"><i class="fas fa-terminal"></i> Console</span><button class="btn" onclick="clearConsole()"><i class="fas fa-trash"></i></button></div><div class="console-output" id="console-output"><div class="console-line"><span class="timestamp">[System]</span> Connecting...</div></div><div class="command-input-wrapper"><input type="text" class="command-input" id="command-input" placeholder="Type command..."><button class="btn btn-primary" onclick="sendCommand()"><i class="fas fa-paper-plane"></i></button></div></div><div><div class="panel" style="margin-bottom:20px"><div class="panel-header"><span class="panel-title"><i class="fas fa-users"></i> Players</span></div><div class="players-list" id="players-list"><div class="player-item" style="color:var(--text-secondary);justify-content:center">No players</div></div></div><div class="panel"><div class="panel-header"><span class="panel-title"><i class="fas fa-folder-open"></i> Files</span></div><div class="file-manager"><div class="breadcrumb" id="file-breadcrumb"><span class="breadcrumb-item" onclick="navigateToRoot()">/</span></div><div class="file-toolbar"><button class="btn btn-icon" onclick="goUp()"><i class="fas fa-arrow-up"></i></button><button class="btn btn-icon" onclick="refreshFiles()"><i class="fas fa-sync-alt"></i></button><button class="btn btn-primary btn-icon" onclick="showCreateFolder()"><i class="fas fa-folder-plus"></i></button><button class="btn btn-primary btn-icon" onclick="triggerUpload()"><i class="fas fa-upload"></i></button><input type="file" id="file-upload" style="display:none" multiple onchange="handleUpload(this)"></div><table class="file-table"><thead><tr><th>Name</th><th>Size</th><th></th></tr></thead><tbody id="file-list"><tr><td colspan="3" style="text-align:center;color:var(--text-secondary)">Loading...</td></tr></tbody></table></div></div></div></div><script>var WS_URL="' + protocol + '//' + host + ':' + port + '";var ws=null;var currentPath="";var serverDirectory="";function connect(){ws=new WebSocket(WS_URL);ws.onopen=function(){updateStatus("connected","Connected")};ws.onmessage=function(e){try{processMessage(JSON.parse(e.data))}catch(err){}};ws.onerror=function(){updateStatus("disconnected","Error");addConsoleLine("[ERROR] Connection failed")};ws.onclose=function(){updateStatus("disconnected","Disconnected")};connect()}function processMessage(data){if(!data||!data.status)return;switch(data.status){case 10:addConsoleLine(data.message,data.time);break;case 200:updateStatus("connected","Connected");break;case 401:ws.send(JSON.stringify({command:"LOGIN",params:""}));break;case 1000:updatePlayers(data.connectedPlayers,data.maxPlayers);break;case 1001:updateCpu(data.usage);break;case 1002:updateRam(data.used,data.max);break;case 1003:updateTps(data.tps);break;case 2000:updateFileList(data);break;case 2001:editFile(data);break;case 200:case 2003:if(data.content)handleDownload(data);break}}function updateStatus(s,m){document.getElementById("connection-badge").textContent=m;document.getElementById("connection-badge").className="status-badge status-"+s}function addConsoleLine(msg,time){if(!msg)return;var o=document.getElementById("console-output");var l=document.createElement("div");l.className="console-line";var lc="log-info";if(msg.indexOf("[ERROR]")>-1||msg.indexOf("[SEVERE]")>-1)lc="log-error";else if(msg.indexOf("[WARN]")>-1)lc="log-warn";l.innerHTML="<span class=\"timestamp\">"+(time||new Date().toLocaleTimeString())+"</span><span class=\"log-level "+lc+"\">"+getLogLevel(msg)+"</span>"+formatMcCodes(msg);o.appendChild(l);o.scrollTop=o.scrollHeight}function getLogLevel(m){if(m.indexOf("[ERROR]")>-1||m.indexOf("[SEVERE]")>-1)return"ERROR";if(m.indexOf("[WARN]")>-1)return"WARN";if(m.indexOf("[INFO]")>-1)return"INFO";return""}function formatMcCodes(m){if(!m)return"";m=m.replace(/</g,"&lt;");var c="0123456789abcdef";for(var i=0;i<c.length;i++){m=m.replace(new RegExp("§"+c[i],"g"),"</span><span class=\"mc-color-"+c[i]+"\">")}return'<span class="mc-color-f">'+m+"</span>"}function sendCommand(){var i=document.getElementById("command-input");var cmd=i.value.trim();if(!cmd||!ws||ws.readyState!==WebSocket.OPEN)return;ws.send(JSON.stringify({command:"EXEC",params:cmd}));i.value="";addConsoleLine("[CONSOLE] "+cmd)}document.getElementById("command-input").addEventListener("keydown",function(e){if(e.key==="Enter")sendCommand()});function updatePlayers(o,m){document.getElementById("players-count").textContent=o+" / "+m;document.getElementById("players-progress").style.width=(o/m*100)+"%"}function updateCpu(u){document.getElementById("cpu-usage").textContent=Math.round(u)+"%";document.getElementById("cpu-progress").style.width=u+"%"}function updateRam(u,m){document.getElementById("ram-usage").textContent=Math.round(u)+" MB / "+Math.round(m)+" MB";document.getElementById("ram-progress").style.width=(u/m*100)+"%"}function updateTps(t){document.getElementById("tps-value").textContent=t.toFixed(1);document.getElementById("tps-progress").style.width=(t/20*100)+"%"}function loadFiles(p){if(!ws||ws.readyState!==WebSocket.OPEN)return;currentPath=p||serverDirectory||"";ws.send(JSON.stringify({command:"FILE_LIST",params:currentPath}))}function updateFileList(d){if(!d||!d.currentPath)return;if(serverDirectory==="")serverDirectory=d.currentPath;currentPath=d.currentPath;updateBreadcrumb();var tb=document.getElementById("file-list");if(!d.files){tb.innerHTML="<tr><td colspan=3 style=\"text-align:center;color:var(--text-secondary)\">No files</td></tr>";return}var files=JSON.parse(d.files);if(files.length===0){tb.innerHTML="<tr><td colspan=3 style=\"text-align:center;color:var(--text-secondary)\">Empty</td></tr>";return}files.sort(function(a,b){return a.is_folder===b.is_folder?a.name.localeCompare(b.name):a.is_folder?-1:1});tb.innerHTML=files.map(function(f){var path=currentPath===serverDirectory?currentPath+f.name:currentPath+"/"+f.name;return'<tr class="file-row" onclick="'+(f.is_folder?"loadFiles(\'"+path+"\')":"viewFile(\'"+f.name+"\')")+'"><td><i class="fas '+(f.is_folder?"fa-folder file-folder":"fa-file")+'"></i> '+f.name+'</td><td>'+(f.is_folder?"-":formatSize(f.size))+'</td><td><div class="file-actions">'+(f.is_folder?"":'<button class="file-action-btn" onclick="event.stopPropagation();downloadFile(\\\''+f.name+'\\\')"><i class="fas fa-download"></i></button>')+'<button class="file-action-btn" onclick="event.stopPropagation();deleteFile(\\\''+f.name+'\\\')"><i class="fas fa-trash"></i></button></div></td></tr>'}).join("")}function formatSize(b){if(!b)return"0 B";var k=1024;var s=["B","KB","MB","GB"];var i=Math.floor(Math.log(b)/Math.log(k));return parseFloat((b/Math.pow(k,i)).toFixed(1))+" "+s[i]}function updateBreadcrumb(){var bc=document.getElementById("file-breadcrumb");if(currentPath===serverDirectory||!currentPath){bc.innerHTML='<span class="breadcrumb-item" onclick="navigateToRoot()">/</span>';return}var rel=currentPath.replace(serverDirectory,"").replace(/^\\//,"");var parts=rel.split("/");var path=serverDirectory;var html='<span class="breadcrumb-item" onclick="navigateToRoot()">/</span>';parts.forEach(function(p){path+="/"+p;html+='<span class="breadcrumb-item" onclick="loadFiles(\\\''+path+'\\\')">'+p+'</span>/'});bc.innerHTML=html}function navigateToRoot(){loadFiles(serverDirectory)}function goUp(){var last=currentPath.lastIndexOf("/");if(last>serverDirectory.length)loadFiles(currentPath.substring(0,last));else if(currentPath!==serverDirectory)loadFiles(serverDirectory)}function refreshFiles(){loadFiles(currentPath)}function viewFile(n){var p=currentPath===serverDirectory?currentPath+n:currentPath+"/"+n;ws.send(JSON.stringify({command:"FILE_READ",params:JSON.stringify({path:p})}))}function editFile(d){if(!d||!d.content)return;var c=JSON.parse(d.content);var nc=prompt("Edit "+c.name+":",c.content);if(nc!==null){ws.send(JSON.stringify({command:"FILE_WRITE",params:JSON.stringify({path:c.path,content:nc})}))}}function downloadFile(n){var p=currentPath===serverDirectory?currentPath+n:currentPath+"/"+n;ws.send(JSON.stringify({command:"FILE_DOWNLOAD",params:JSON.stringify({path:p})}))}function handleDownload(d){if(!d||!d.content)return;var c=JSON.parse(d.content);var blob=new Blob([new Uint8Array(atob(c.content).split("").map(function(c){return c.charCodeAt(0)}))]);var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=c.filename;a.click();URL.revokeObjectURL(a.href)}function deleteFile(n){if(!confirm("Delete "+n+"?"))return;var p=currentPath===serverDirectory?currentPath+n:currentPath+"/"+n;ws.send(JSON.stringify({command:"FILE_DELETE",params:JSON.stringify({path:p})}))}function showCreateFolder(){var name=prompt("Folder name:");if(name){var p=currentPath===serverDirectory?currentPath+name:currentPath+"/"+name;ws.send(JSON.stringify({command:"FILE_CREATE_FOLDER",params:JSON.stringify({path:p})}))}}function triggerUpload(){document.getElementById("file-upload").click()}function handleUpload(input){Array.from(input.files).forEach(function(file,i){var r=new FileReader();r.onload=function(e){var p=currentPath===serverDirectory?currentPath+file.name:currentPath+"/"+file.name;ws.send(JSON.stringify({command:"FILE_WRITE",params:JSON.stringify({path:p,content:e.target.result.split(",")[1]})}));if(i===input.files.length-1)refreshFiles()};r.readAsDataURL(file)})}function clearConsole(){document.getElementById("console-output").innerHTML=""}<\/script></body></html>';
+    function getDashboardHTML(host, port, wsUrl) {
+        var css = '<style>:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bd:#30363d;--txt:#c9d1d9;--txt2:#8b949e;--blue:#58a6ff;--green:#3fb950;--red:#f85149;--mc0:#000;--mc1:#00a;--mc2:#0a0;--mc3:#0aa;--mc4:#a00;--mc5:#a0a;--mc6:#fa0;--mc7:#aaa;--mc8:#555;--mc9:#55f;--mca:#5f5;--mcb:#5ff;--mcc:#f55;--mcd:#f5f;--mce:#ff5;--mcf:#fff;--cons:#0d1117}body.light-mode{:root{--bg:#fff;--bg2:#f6f8fa;--bg3:#eaeef2;--bd:#d0d7de;--txt:#24292f;--txt2:#57606a;--blue:#0969da;--green:#1a7f37;--red:#cf222e}}*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,background:var(--bg);color:var(--txt);min-height:100vh}.c{max-width:1400px;margin:0 auto;padding:20px}.h{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:var(--bg2);border:1px solid var(--bd);border-radius:8px;margin-bottom:20px}.h h1{font-size:20px}.b{padding:8px 14px;border-radius:6px;border:1px solid var(--bd);background:var(--bg3);color:var(--txt);cursor:pointer}.b:hover{background:var(--bd)}.b.bl{background:var(--blue);color:#fff;border:none}.s{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}.d{background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:15px}.d h3{color:var(--txt2);font-size:11px;text-transform:uppercase;margin-bottom:8px}.d .v{font-size:24px;font-weight:600}.p{width:100%;height:6px;background:var(--bg3);border-radius:3px;margin-top:8px}.f{height:100%;background:var(--green);border-radius:3px}.m{display:grid;grid-template-columns:2fr 1fr);gap:20px}@media(max-width:900px){.m{grid-template-columns:1fr}}.pan{background:var(--bg2);border:1px solid var(--bd);border-radius:8px;overflow:hidden}.ph{padding:12px 15px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between}.pt{font-size:14px;font-weight:600}.co{height:350px;overflow-y:auto;background:var(--cons);padding:12px;font-family:monospace;font-size:12px;line-height:1.5}.cl{padding:2px 0}.ts{color:var(--txt2);margin-right:6px}.ll{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-right:6px;background:rgba(86,140,253,0.15);color:var(--blue)}.le{background:rgba(248,81,73,0.15);color:var(--red)}.lw{background:rgba(187,128,9,0.15);color:var(--yellow)}.ci{display:flex;gap:8px;padding:12px;border-top:1px solid var(--bd)}.ci input{flex:1;padding:10px;background:var(--bg3);border:1px solid var(--bd);border-radius:6px;color:var(--txt);font-family:monospace}.pl{max-height:200px;overflow-y:auto}.pi{padding:10px 15px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between}.fm{padding:15px}.bc{display:flex;gap:6px;margin-bottom:12px;padding:8px 12px;background:var(--bg3);border-radius:6px;font-size:12px}.bi{color:var(--blue);cursor:pointer}.tb{display:flex;gap:6px;margin-bottom:12px}.ft{width:100%;border-collapse:collapse}.ft th,.ft td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--bd);font-size:12px}.ft th{color:var(--txt2);font-size:10px;text-transform:uppercase}.tr:hover{background:var(--bg3)}.fd{color:var(--mc6);margin-right:6px}.ac{display:flex;gap:4px}.ab{padding:4px 8px;background:transparent;border:1px solid var(--bd);border-radius:4px;color:var(--txt2);cursor:pointer;font-size:10px}.ab:hover{background:var(--bg3)}.mc0{color:var(--mc0)}.mc1{color:var(--mc1)}.mc2{color:var(--mc2)}.mc3{color:var(--mc3)}.mc4{color:var(--mc4)}.mc5{color:var(--mc5)}.mc6{color:var(--mc6)}.mc7{color:var(--mc7)}.mc8{color:var(--mc8)}.mc9{color:var(--mc9)}.mca{color:var(--mca)}.mcb{color:var(--mcb)}.mcc{color:var(--mcc)}.mcd{color:var(--mcd)}.mce{color:var(--mce)}.mcf{color:var(--mcf)}</style>';
+        
+        var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WebConsole - ' + host + ':' + port + '</title>' + css + '</head><body><div class="c"><div class="h"><h1>' + host + ':' + port + '</h1><span id="st" style="padding:5px 12px;border-radius:20px;font-size:11px;background:rgba(86,140,253,0.15);color:var(--blue)">Connecting...</span></div><div class="s"><div class="d"><h3>Players</h3><div class="v" id="pc">0/0</div><div class="p"><div class="f" id="pp" style="width:0%"></div></div></div><div class="d"><h3>CPU</h3><div class="v" id="cu">0%</div><div class="p"><div class="f" id="cup" style="width:0%"></div></div></div><div class="d"><h3>RAM</h3><div class="v" id="ru">0 MB</div><div class="p"><div class="f" id="rup" style="width:0%"></div></div></div><div class="d"><h3>TPS</h3><div class="v" id="tps">20.0</div><div class="p"><div class="f" id="tpsp" style="width:100%"></div></div></div></div><div class="m"><div class="pan"><div class="ph"><span class="pt">Console</span><button class="b" onclick="clc()"><i class="fas fa-trash"></i></button></div><div class="co" id="co"><div class="cl"><span class="ts">[System]</span> Connecting...</div></div><div class="ci"><input type="text" id="cmd" placeholder="Type command..." onkeydown="if(event.key==\'Enter\')sc()"><button class="b bl" onclick="sc()"><i class="fas fa-paper-plane"></i></button></div></div><div><div class="pan" style="margin-bottom:20px"><div class="ph"><span class="pt">Players</span></div><div class="pl" id="pl"><div class="pi" style="color:var(--txt2);justify-content:center">No players</div></div></div><div class="pan"><div class="ph"><span class="pt">Files</span></div><div class="fm"><div class="bc" id="bc"><span class="bi" onclick="nt()">/</span></div><div class="tb"><button class="b" onclick="up()"><i class="fas fa-arrow-up"></i></button><button class="b" onclick="rf()"><i class="fas fa-sync-alt"></i></button><button class="b bl" onclick="cf()"><i class="fas fa-folder-plus"></i></button><button class="b bl" onclick="upl()"><i class="fas fa-upload"></i></button><input type="file" id="uf" style="display:none" multiple onchange="uh(this)"></div><table class="ft"><thead><tr><th>Name</th><th>Size</th><th></th></tr></thead><tbody id="fl"><tr><td colspan="3" style="text-align:center;color:var(--txt2)">Loading...</td></tr></tbody></table></div></div></div></div><script>var w=new WebSocket("' + wsUrl + '");var cp="";var sd="";w.onopen=function(){st("Connected","connected")};w.onmessage=function(e){pm(JSON.parse(e.data))};w.onerror=function(){st("Error","disconnected");al("[ERROR] Connection failed")};w.onclose=function(){st("Disconnected","disconnected")};function st(m,s){document.getElementById("st").textContent=m;document.getElementById("st").style.background="rgba("+(s=="connected"?"63,185,80":"248,81,73")+",0.15)";document.getElementById("st").style.color=s=="connected"?"var(--green)":"var(--red)"}function pm(d){if(!d)return;switch(d.status){case 10:al(d.message,d.time);break;case 200:st("Connected","connected");break;case 401:w.send(JSON.stringify({command:"LOGIN",params:""}));break;case 1000:upv(d.connectedPlayers,d.maxPlayers);break;case 1001:uc(d.usage);break;case 1002:ur(d.used,d.max);break;case 1003:ut(d.tps);break;case 2000:ufl(d);break;case 2001:ef(d);break;case 200:case 2003:if(d.content)hd(d);break}}function al(m,t){if(!m)return;var o=document.getElementById("co");var l=document.createElement("div");l.className="cl";var lc="";if(m.indexOf("[ERROR]")>-1||m.indexOf("[SEVERE]")>-1)lc="le";else if(m.indexOf("[WARN]")>-1)lc="lw";l.innerHTML="<span class=ts>"+(t||new Date().toLocaleTimeString())+"</span><span class=ll "+lc+">"+gl(m)+"</span>"+fm(m);o.appendChild(l);o.scrollTop=o.scrollHeight}function gl(m){if(m.indexOf("[ERROR]")>-1||m.indexOf("[SEVERE]")>-1)return"ERROR";if(m.indexOf("[WARN]")>-1)return"WARN";if(m.indexOf("[INFO]")>-1)return"INFO";return""}function fm(m){if(!m)return"";m=m.replace(/</g,"&lt;");var c="0123456789abcdef";for(var i=0;i<c.length;i++){m=m.replace(new RegExp("§"+c[i],"g"),"</span><span class=mc"+c[i]+">")}return'<span class=mcf>'+m+"</span>"}function sc(){var i=document.getElementById("cmd");var c=i.value.trim();if(!c||w.readyState!==WebSocket.OPEN)return;w.send(JSON.stringify({command:"EXEC",params:c}));i.value="";al("[CONSOLE] "+c)}function clc(){document.getElementById("co").innerHTML=""}function upv(o,m){document.getElementById("pc").textContent=o+"/"+m;document.getElementById("pp").style.width=(o/m*100)+"%"}function uc(u){document.getElementById("cu").textContent=Math.round(u)+"%";document.getElementById("cup").style.width=u+"%"}function ur(u,m){document.getElementById("ru").textContent=Math.round(u)+"MB/"+Math.round(m)+"MB";document.getElementById("rup").style.width=(u/m*100)+"%"}function ut(t){document.getElementById("tps").textContent=t.toFixed(1);document.getElementById("tpsp").style.width=(t/20*100)+"%"}function lf(p){if(w.readyState!==WebSocket.OPEN)return;cp=p||sd||"";w.send(JSON.stringify({command:"FILE_LIST",params:cp}))}function ufl(d){if(!d||!d.currentPath)return;if(sd==="")sd=d.currentPath;cp=d.currentPath;bc();var tb=document.getElementById("fl");if(!d.files){tb.innerHTML="<tr><td colspan=3 style=text-align:center;color:var(--txt2)>No files</td></tr>";return}var fs=JSON.parse(d.files);if(fs.length===0){tb.innerHTML="<tr><td colspan=3 style=text-align:center;color:var(--txt2)>Empty</td></tr>";return}fs.sort(function(a,b){return a.is_folder===b.is_folder?a.name.localeCompare(b.name):a.is_folder?-1:1});tb.innerHTML=fs.map(function(f){var pa=cp===sd?cp+f.name:cp+"/"+f.name;return"<tr class=tr onclick=\""+(f.is_folder?"lf(\'"+pa+"\')":"vf(\'"+f.name+"\')")+"\"><td><i class=\"fas "+(f.is_folder?"fa-folder fd":"fa-file")+"\"></i> "+f.name+"</td><td>"+(f.is_folder?"-":fsz(f.size))+'</td><td><div class=ac>'+(f.is_folder?"":'<button class=ab onclick="event.stopPropagation();df(\\\''+f.name+'\\\')"><i class="fas fa-download"></i></button>')+'<button class=ab onclick="event.stopPropagation();delf(\\\''+f.name+'\\\')"><i class="fas fa-trash"></i></button></div></td></tr>'}).join("")}function fsz(b){if(!b)return"0 B";var k=1024;var s=["B","KB","MB","GB"];var i=Math.floor(Math.log(b)/Math.log(k));return parseFloat((b/Math.pow(k,i)).toFixed(1))+" "+s[i]}function bc(){var b=document.getElementById("bc");if(cp===sd||!cp){b.innerHTML="<span class=bi onclick=nt()>/</span>";return}var r=cp.replace(sd,"").replace(/^\\//,"");var ps=r.split("/");var pa=sd;var h="<span class=bi onclick=nt()>/</span>";ps.forEach(function(p){pa+="/"+p;h+='<span class=bi onclick="lf(\\\''+pa+'\\\')">'+p+"</span>/"});b.innerHTML=h}function nt(){lf(sd)}function up(){var l=cp.lastIndexOf("/");if(l>sd.length)lf(cp.substring(0,l));else if(cp!==sd)lf(sd)}function rf(){lf(cp)}function vf(n){var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_READ",params:JSON.stringify({path:pa})}))}function ef(d){if(!d||!d.content)return;var c=JSON.parse(d.content);var nc=prompt("Edit "+c.name+":",c.content);if(nc!==null){w.send(JSON.stringify({command:"FILE_WRITE",params:JSON.stringify({path:c.path,content:nc})}))}}function df(n){var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_DOWNLOAD",params:JSON.stringify({path:pa})}))}function hd(d){if(!d||!d.content)return;var c=JSON.parse(d.content);var bl=new Blob([new Uint8Array(atob(c.content).split("").map(function(x){return x.charCodeAt(0)}))]);var a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=c.filename;a.click()}function delf(n){if(!confirm("Delete "+n+"?"))return;var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_DELETE",params:JSON.stringify({path:pa})}))}function cf(){var n=prompt("Folder name:");if(n){var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_CREATE_FOLDER",params:JSON.stringify({path:pa})}))}}function upl(){document.getElementById("uf").click()}function uh(inp){Array.from(inp.files).forEach(function(f,i){var r=new FileReader();r.onload=function(e){var pa=cp===sd?cp+f.name:cp+"/"+f.name;w.send(JSON.stringify({command:"FILE_WRITE",params:JSON.stringify({path:pa,content:e.target.result.split(",")[1]})}));if(i===inp.files.length-1)rf()};r.readAsDataURL(f)})}<\/script></body></html>';
+        return html;
     }
-    
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var host = document.getElementById('server-host').value.trim();
-        var port = document.getElementById('server-port').value.trim();
-        if (!host || !port) { alert('Please enter server address and port'); return; }
-        connectToServerDirect(host, port);
-    });
     
     window.addEventListener('message', function(e) {
         if (e.data && e.data.action === 'goBack') {
