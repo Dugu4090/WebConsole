@@ -1,327 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebConsole - Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #21262d;
-            --border-color: #30363d;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --accent-blue: #58a6ff;
-            --accent-green: #3fb950;
-            --accent-yellow: #d29922;
-            --accent-red: #f85149;
-        }
-        
-        body.light-mode {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f6f8fa;
-            --bg-tertiary: #eaeef2;
-            --border-color: #d0d7de;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --accent-blue: #0969da;
-            --accent-green: #1a7f37;
-            --accent-yellow: #9a6700;
-            --accent-red: #cf222e;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .login-container {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .login-header i {
-            font-size: 48px;
-            color: var(--accent-blue);
-            margin-bottom: 15px;
-        }
-        
-        .login-header h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            background: var(--accent-blue);
-            color: white;
-            margin-bottom: 10px;
-        }
-        
-        .btn-secondary {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-        
-        .servers-list {
-            margin-top: 20px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
-        }
-        
-        .server-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            margin-bottom: 8px;
-        }
-        
-        .server-btn {
-            padding: 5px 10px;
-            font-size: 12px;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-            background: transparent;
-            color: var(--text-secondary);
-            margin-left: 5px;
-        }
-        
-        .theme-toggle {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            padding: 10px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        
-        .hidden { display: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebConsole - Login</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui;background:#0d1117;color:#c9d1d9;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.c{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:40px;width:100%;max-width:400px}
+h1{font-size:24px;margin-bottom:20px;text-align:center}
+h1 i{font-size:40px;color:#58a6ff;display:block;margin-bottom:10px}
+.f{margin-bottom:15px}
+label{display:block;font-size:14px;margin-bottom:5px}
+input{width:100%;padding:10px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:14px}
+.b{width:100%;padding:10px;border-radius:6px;border:none;background:#58a6ff;color:#fff;font-size:14px;cursor:pointer;margin-bottom:10px}
+.b2{width:100%;padding:10px;border-radius:6px;border:1px solid #30363d;background:#21262d;color:#c9d1d9;font-size:14px;cursor:pointer}
+.s{margin-top:20px;border-top:1px solid #30363d;padding-top:20px}
+.s h3{font-size:14px;color:#8b949e;margin-bottom:10px}
+.sv{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#21262d;border:1px solid #30363d;border-radius:6px;margin-bottom:8px}
+.sv span{font-size:13px}
+.sv button{padding:5px 10px;font-size:12px;cursor:pointer;border:1px solid #30363d;background:transparent;color:#8b949e;margin-left:5px}
+.t{position:fixed;top:15px;right:15px;padding:10px;background:#161b22;border:1px solid #30363d;border-radius:6px;cursor:pointer}
+.h{display:none}
+</style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">
-        <i class="fas fa-moon" id="theme-icon"></i>
-    </button>
-    
-    <div class="login-container" id="login-view">
-        <div class="login-header">
-            <i class="fas fa-terminal"></i>
-            <h1>WebConsole</h1>
-            <p style="color: var(--text-secondary)">Connect to your server</p>
-        </div>
-        
-        <form id="login-form" onsubmit="return connectServer(event)">
-            <div class="form-group">
-                <label>Server IP</label>
-                <input type="text" id="server-host" placeholder="45.59.132.155" required>
-            </div>
-            <div class="form-group">
-                <label>Port</label>
-                <input type="number" id="server-port" placeholder="8080" value="8080" required>
-            </div>
-            <button type="submit" class="btn">Connect</button>
-            <button type="button" class="btn btn-secondary" onclick="saveServer()">Save Server</button>
-        </form>
-        
-        <div class="servers-list">
-            <h3 style="color: var(--text-secondary); font-size: 14px; margin-bottom: 10px;">Saved Servers</h3>
-            <div id="servers-container"></div>
-        </div>
-    </div>
-    
-    <div class="hidden" id="dashboard-view">
-        <iframe id="dashboard-frame" style="width:100vw;height:100vh;border:none;"></iframe>
-    </div>
-
-    <script>
-    var ws = null;
-    
-    function initTheme() {
-        var saved = localStorage.getItem('webconsole-theme');
-        if (saved === 'light') {
-            document.body.classList.add('light-mode');
-            document.getElementById('theme-icon').className = 'fas fa-sun';
-        }
-    }
-    
-    function toggleTheme() {
-        var body = document.body;
-        var icon = document.getElementById('theme-icon');
-        if (body.classList.contains('light-mode')) {
-            body.classList.remove('light-mode');
-            localStorage.setItem('webconsole-theme', 'dark');
-            icon.className = 'fas fa-moon';
-        } else {
-            body.classList.add('light-mode');
-            localStorage.setItem('webconsole-theme', 'light');
-            icon.className = 'fas fa-sun';
-        }
-    }
-    
-    function getServers() {
-        var data = localStorage.getItem('webconsole-servers');
-        if (data) {
-            return JSON.parse(data);
-        }
-        return [];
-    }
-    
-    function saveServers(servers) {
-        localStorage.setItem('webconsole-servers', JSON.stringify(servers));
-        renderServers();
-    }
-    
-    function renderServers() {
-        var servers = getServers();
-        var container = document.getElementById('servers-container');
-        if (servers.length === 0) {
-            container.innerHTML = '<p style="color: var(--text-secondary); font-size: 13px;">No saved servers</p>';
-            return;
-        }
-        var html = '';
-        for (var i = 0; i < servers.length; i++) {
-            var s = servers[i];
-            html += '<div class="server-item">';
-            html += '<span>' + s.host + ':' + s.port + '</span>';
-            html += '<div>';
-            html += '<button class="server-btn" onclick="connectToIndex(' + i + ')">Connect</button>';
-            html += '<button class="server-btn" onclick="deleteServer(' + i + ')" style="color: var(--accent-red)">Delete</button>';
-            html += '</div></div>';
-        }
-        container.innerHTML = html;
-    }
-    
-    function saveServer() {
-        var host = document.getElementById('server-host').value.trim();
-        var port = document.getElementById('server-port').value.trim();
-        if (!host || !port) {
-            alert('Please enter server IP and port');
-            return;
-        }
-        var servers = getServers();
-        servers.push({host: host, port: port});
-        saveServers(servers);
-        alert('Server saved!');
-    }
-    
-    function deleteServer(index) {
-        var servers = getServers();
-        servers.splice(index, 1);
-        saveServers(servers);
-    }
-    
-    function connectToIndex(index) {
-        var servers = getServers();
-        var s = servers[index];
-        document.getElementById('server-host').value = s.host;
-        document.getElementById('server-port').value = s.port;
-        connectServer(null);
-    }
-    
-    function connectServer(e) {
-        if (e) e.preventDefault();
-        var host = document.getElementById('server-host').value.trim();
-        var port = document.getElementById('server-port').value.trim();
-        if (!host || !port) {
-            alert('Please enter server IP and port');
-            return false;
-        }
-        
-        var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        var wsUrl = protocol + '//' + host + ':' + port;
-        
-        ws = new WebSocket(wsUrl);
-        
-        ws.onopen = function() {
-            showDashboard(host, port);
-        };
-        
-        ws.onerror = function(error) {
-            alert('Cannot connect to ' + host + ':' + port + '. Check if server is running and port is correct.');
-        };
-        
-        return false;
-    }
-    
-    function showDashboard(host, port) {
-        document.getElementById('login-view').classList.add('hidden');
-        document.getElementById('dashboard-view').classList.remove('hidden');
-        
-        var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        var wsUrl = protocol + '//' + host + ':' + port;
-        
-        var html = getDashboardHTML(host, port, wsUrl);
-        var blob = new Blob([html], {type: 'text/html'});
-        document.getElementById('dashboard-frame').src = URL.createObjectURL(blob);
-    }
-    
-    function getDashboardHTML(host, port, wsUrl) {
-        var css = '<style>:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bd:#30363d;--txt:#c9d1d9;--txt2:#8b949e;--blue:#58a6ff;--green:#3fb950;--red:#f85149;--mc0:#000;--mc1:#00a;--mc2:#0a0;--mc3:#0aa;--mc4:#a00;--mc5:#a0a;--mc6:#fa0;--mc7:#aaa;--mc8:#555;--mc9:#55f;--mca:#5f5;--mcb:#5ff;--mcc:#f55;--mcd:#f5f;--mce:#ff5;--mcf:#fff;--cons:#0d1117}body.light-mode{:root{--bg:#fff;--bg2:#f6f8fa;--bg3:#eaeef2;--bd:#d0d7de;--txt:#24292f;--txt2:#57606a;--blue:#0969da;--green:#1a7f37;--red:#cf222e}}*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,background:var(--bg);color:var(--txt);min-height:100vh}.c{max-width:1400px;margin:0 auto;padding:20px}.h{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:var(--bg2);border:1px solid var(--bd);border-radius:8px;margin-bottom:20px}.h h1{font-size:20px}.b{padding:8px 14px;border-radius:6px;border:1px solid var(--bd);background:var(--bg3);color:var(--txt);cursor:pointer}.b:hover{background:var(--bd)}.b.bl{background:var(--blue);color:#fff;border:none}.s{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}.d{background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:15px}.d h3{color:var(--txt2);font-size:11px;text-transform:uppercase;margin-bottom:8px}.d .v{font-size:24px;font-weight:600}.p{width:100%;height:6px;background:var(--bg3);border-radius:3px;margin-top:8px}.f{height:100%;background:var(--green);border-radius:3px}.m{display:grid;grid-template-columns:2fr 1fr);gap:20px}@media(max-width:900px){.m{grid-template-columns:1fr}}.pan{background:var(--bg2);border:1px solid var(--bd);border-radius:8px;overflow:hidden}.ph{padding:12px 15px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between}.pt{font-size:14px;font-weight:600}.co{height:350px;overflow-y:auto;background:var(--cons);padding:12px;font-family:monospace;font-size:12px;line-height:1.5}.cl{padding:2px 0}.ts{color:var(--txt2);margin-right:6px}.ll{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-right:6px;background:rgba(86,140,253,0.15);color:var(--blue)}.le{background:rgba(248,81,73,0.15);color:var(--red)}.lw{background:rgba(187,128,9,0.15);color:var(--yellow)}.ci{display:flex;gap:8px;padding:12px;border-top:1px solid var(--bd)}.ci input{flex:1;padding:10px;background:var(--bg3);border:1px solid var(--bd);border-radius:6px;color:var(--txt);font-family:monospace}.pl{max-height:200px;overflow-y:auto}.pi{padding:10px 15px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between}.fm{padding:15px}.bc{display:flex;gap:6px;margin-bottom:12px;padding:8px 12px;background:var(--bg3);border-radius:6px;font-size:12px}.bi{color:var(--blue);cursor:pointer}.tb{display:flex;gap:6px;margin-bottom:12px}.ft{width:100%;border-collapse:collapse}.ft th,.ft td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--bd);font-size:12px}.ft th{color:var(--txt2);font-size:10px;text-transform:uppercase}.tr:hover{background:var(--bg3)}.fd{color:var(--mc6);margin-right:6px}.ac{display:flex;gap:4px}.ab{padding:4px 8px;background:transparent;border:1px solid var(--bd);border-radius:4px;color:var(--txt2);cursor:pointer;font-size:10px}.ab:hover{background:var(--bg3)}.mc0{color:var(--mc0)}.mc1{color:var(--mc1)}.mc2{color:var(--mc2)}.mc3{color:var(--mc3)}.mc4{color:var(--mc4)}.mc5{color:var(--mc5)}.mc6{color:var(--mc6)}.mc7{color:var(--mc7)}.mc8{color:var(--mc8)}.mc9{color:var(--mc9)}.mca{color:var(--mca)}.mcb{color:var(--mcb)}.mcc{color:var(--mcc)}.mcd{color:var(--mcd)}.mce{color:var(--mce)}.mcf{color:var(--mcf)}</style>';
-        
-        var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WebConsole - ' + host + ':' + port + '</title>' + css + '</head><body><div class="c"><div class="h"><h1>' + host + ':' + port + '</h1><span id="st" style="padding:5px 12px;border-radius:20px;font-size:11px;background:rgba(86,140,253,0.15);color:var(--blue)">Connecting...</span></div><div class="s"><div class="d"><h3>Players</h3><div class="v" id="pc">0/0</div><div class="p"><div class="f" id="pp" style="width:0%"></div></div></div><div class="d"><h3>CPU</h3><div class="v" id="cu">0%</div><div class="p"><div class="f" id="cup" style="width:0%"></div></div></div><div class="d"><h3>RAM</h3><div class="v" id="ru">0 MB</div><div class="p"><div class="f" id="rup" style="width:0%"></div></div></div><div class="d"><h3>TPS</h3><div class="v" id="tps">20.0</div><div class="p"><div class="f" id="tpsp" style="width:100%"></div></div></div></div><div class="m"><div class="pan"><div class="ph"><span class="pt">Console</span><button class="b" onclick="clc()"><i class="fas fa-trash"></i></button></div><div class="co" id="co"><div class="cl"><span class="ts">[System]</span> Connecting...</div></div><div class="ci"><input type="text" id="cmd" placeholder="Type command..." onkeydown="if(event.key==\'Enter\')sc()"><button class="b bl" onclick="sc()"><i class="fas fa-paper-plane"></i></button></div></div><div><div class="pan" style="margin-bottom:20px"><div class="ph"><span class="pt">Players</span></div><div class="pl" id="pl"><div class="pi" style="color:var(--txt2);justify-content:center">No players</div></div></div><div class="pan"><div class="ph"><span class="pt">Files</span></div><div class="fm"><div class="bc" id="bc"><span class="bi" onclick="nt()">/</span></div><div class="tb"><button class="b" onclick="up()"><i class="fas fa-arrow-up"></i></button><button class="b" onclick="rf()"><i class="fas fa-sync-alt"></i></button><button class="b bl" onclick="cf()"><i class="fas fa-folder-plus"></i></button><button class="b bl" onclick="upl()"><i class="fas fa-upload"></i></button><input type="file" id="uf" style="display:none" multiple onchange="uh(this)"></div><table class="ft"><thead><tr><th>Name</th><th>Size</th><th></th></tr></thead><tbody id="fl"><tr><td colspan="3" style="text-align:center;color:var(--txt2)">Loading...</td></tr></tbody></table></div></div></div></div><script>var w=new WebSocket("' + wsUrl + '");var cp="";var sd="";w.onopen=function(){st("Connected","connected")};w.onmessage=function(e){pm(JSON.parse(e.data))};w.onerror=function(){st("Error","disconnected");al("[ERROR] Connection failed")};w.onclose=function(){st("Disconnected","disconnected")};function st(m,s){document.getElementById("st").textContent=m;document.getElementById("st").style.background="rgba("+(s=="connected"?"63,185,80":"248,81,73")+",0.15)";document.getElementById("st").style.color=s=="connected"?"var(--green)":"var(--red)"}function pm(d){if(!d)return;switch(d.status){case 10:al(d.message,d.time);break;case 200:st("Connected","connected");break;case 401:w.send(JSON.stringify({command:"LOGIN",params:""}));break;case 1000:upv(d.connectedPlayers,d.maxPlayers);break;case 1001:uc(d.usage);break;case 1002:ur(d.used,d.max);break;case 1003:ut(d.tps);break;case 2000:ufl(d);break;case 2001:ef(d);break;case 200:case 2003:if(d.content)hd(d);break}}function al(m,t){if(!m)return;var o=document.getElementById("co");var l=document.createElement("div");l.className="cl";var lc="";if(m.indexOf("[ERROR]")>-1||m.indexOf("[SEVERE]")>-1)lc="le";else if(m.indexOf("[WARN]")>-1)lc="lw";l.innerHTML="<span class=ts>"+(t||new Date().toLocaleTimeString())+"</span><span class=ll "+lc+">"+gl(m)+"</span>"+fm(m);o.appendChild(l);o.scrollTop=o.scrollHeight}function gl(m){if(m.indexOf("[ERROR]")>-1||m.indexOf("[SEVERE]")>-1)return"ERROR";if(m.indexOf("[WARN]")>-1)return"WARN";if(m.indexOf("[INFO]")>-1)return"INFO";return""}function fm(m){if(!m)return"";m=m.replace(/</g,"&lt;");var c="0123456789abcdef";for(var i=0;i<c.length;i++){m=m.replace(new RegExp("§"+c[i],"g"),"</span><span class=mc"+c[i]+">")}return'<span class=mcf>'+m+"</span>"}function sc(){var i=document.getElementById("cmd");var c=i.value.trim();if(!c||w.readyState!==WebSocket.OPEN)return;w.send(JSON.stringify({command:"EXEC",params:c}));i.value="";al("[CONSOLE] "+c)}function clc(){document.getElementById("co").innerHTML=""}function upv(o,m){document.getElementById("pc").textContent=o+"/"+m;document.getElementById("pp").style.width=(o/m*100)+"%"}function uc(u){document.getElementById("cu").textContent=Math.round(u)+"%";document.getElementById("cup").style.width=u+"%"}function ur(u,m){document.getElementById("ru").textContent=Math.round(u)+"MB/"+Math.round(m)+"MB";document.getElementById("rup").style.width=(u/m*100)+"%"}function ut(t){document.getElementById("tps").textContent=t.toFixed(1);document.getElementById("tpsp").style.width=(t/20*100)+"%"}function lf(p){if(w.readyState!==WebSocket.OPEN)return;cp=p||sd||"";w.send(JSON.stringify({command:"FILE_LIST",params:cp}))}function ufl(d){if(!d||!d.currentPath)return;if(sd==="")sd=d.currentPath;cp=d.currentPath;bc();var tb=document.getElementById("fl");if(!d.files){tb.innerHTML="<tr><td colspan=3 style=text-align:center;color:var(--txt2)>No files</td></tr>";return}var fs=JSON.parse(d.files);if(fs.length===0){tb.innerHTML="<tr><td colspan=3 style=text-align:center;color:var(--txt2)>Empty</td></tr>";return}fs.sort(function(a,b){return a.is_folder===b.is_folder?a.name.localeCompare(b.name):a.is_folder?-1:1});tb.innerHTML=fs.map(function(f){var pa=cp===sd?cp+f.name:cp+"/"+f.name;return"<tr class=tr onclick=\""+(f.is_folder?"lf(\'"+pa+"\')":"vf(\'"+f.name+"\')")+"\"><td><i class=\"fas "+(f.is_folder?"fa-folder fd":"fa-file")+"\"></i> "+f.name+"</td><td>"+(f.is_folder?"-":fsz(f.size))+'</td><td><div class=ac>'+(f.is_folder?"":'<button class=ab onclick="event.stopPropagation();df(\\\''+f.name+'\\\')"><i class="fas fa-download"></i></button>')+'<button class=ab onclick="event.stopPropagation();delf(\\\''+f.name+'\\\')"><i class="fas fa-trash"></i></button></div></td></tr>'}).join("")}function fsz(b){if(!b)return"0 B";var k=1024;var s=["B","KB","MB","GB"];var i=Math.floor(Math.log(b)/Math.log(k));return parseFloat((b/Math.pow(k,i)).toFixed(1))+" "+s[i]}function bc(){var b=document.getElementById("bc");if(cp===sd||!cp){b.innerHTML="<span class=bi onclick=nt()>/</span>";return}var r=cp.replace(sd,"").replace(/^\\//,"");var ps=r.split("/");var pa=sd;var h="<span class=bi onclick=nt()>/</span>";ps.forEach(function(p){pa+="/"+p;h+='<span class=bi onclick="lf(\\\''+pa+'\\\')">'+p+"</span>/"});b.innerHTML=h}function nt(){lf(sd)}function up(){var l=cp.lastIndexOf("/");if(l>sd.length)lf(cp.substring(0,l));else if(cp!==sd)lf(sd)}function rf(){lf(cp)}function vf(n){var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_READ",params:JSON.stringify({path:pa})}))}function ef(d){if(!d||!d.content)return;var c=JSON.parse(d.content);var nc=prompt("Edit "+c.name+":",c.content);if(nc!==null){w.send(JSON.stringify({command:"FILE_WRITE",params:JSON.stringify({path:c.path,content:nc})}))}}function df(n){var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_DOWNLOAD",params:JSON.stringify({path:pa})}))}function hd(d){if(!d||!d.content)return;var c=JSON.parse(d.content);var bl=new Blob([new Uint8Array(atob(c.content).split("").map(function(x){return x.charCodeAt(0)}))]);var a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=c.filename;a.click()}function delf(n){if(!confirm("Delete "+n+"?"))return;var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_DELETE",params:JSON.stringify({path:pa})}))}function cf(){var n=prompt("Folder name:");if(n){var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_CREATE_FOLDER",params:JSON.stringify({path:pa})}))}}function upl(){document.getElementById("uf").click()}function uh(inp){Array.from(inp.files).forEach(function(f,i){var r=new FileReader();r.onload=function(e){var pa=cp===sd?cp+f.name:cp+"/"+f.name;w.send(JSON.stringify({command:"FILE_WRITE",params:JSON.stringify({path:pa,content:e.target.result.split(",")[1]})}));if(i===inp.files.length-1)rf()};r.readAsDataURL(f)})}<\/script></body></html>';
-        return html;
-    }
-    
-    window.addEventListener('message', function(e) {
-        if (e.data && e.data.action === 'goBack') {
-            if (ws) ws.close();
-            document.getElementById('dashboard-view').classList.add('hidden');
-            document.getElementById('login-view').classList.remove('hidden');
-        }
-    });
-    
-    initTheme();
-    renderServers();
-    </script>
+<button class="t" onclick="toggleTheme()"><i class="fas fa-moon" id="ti"></i></button>
+<div class="c" id="login">
+<h1><i class="fas fa-terminal"></i>WebConsole</h1>
+<form onsubmit="return doLogin(event)">
+<div class="f"><label>Server IP</label><input type="text" id="host" placeholder="45.59.132.155" required></div>
+<div class="f"><label>Port</label><input type="number" id="port" placeholder="8080" value="8080" required></div>
+<button type="submit" class="b">Connect</button>
+<button type="button" class="b2" onclick="doSave()">Save Server</button>
+</form>
+<div class="s"><h3>Saved Servers</h3><div id="slist"></div></div>
+</div>
+<div class="c h" id="dash"><iframe id="frame" style="width:100vw;height:100vh;border:none"></iframe></div>
+<script>
+var ws=null;
+function initTheme(){var t=localStorage.getItem('webconsole-theme');if(t=='light'){document.body.classList.add('light-mode');document.getElementById('ti').className='fas fa-sun'}}
+function toggleTheme(){var b=document.body,i=document.getElementById('ti');if(b.classList.contains('light-mode')){b.classList.remove('light-mode');localStorage.setItem('webconsole-theme','dark');i.className='fas fa-moon'}else{b.classList.add('light-mode');localStorage.setItem('webconsole-theme','light');i.className='fas fa-sun'}}
+function getServers(){var d=localStorage.getItem('wcservers');return d?JSON.parse(d):[]}
+function saveServers(s){localStorage.setItem('wcservers',JSON.stringify(s));renderServers()}
+function renderServers(){var s=getServers(),h='';for(var i=0;i<s.length;i++){h=h+'<div class="sv"><span>'+s[i].host+':'+s[i].port+'</span><div><button onclick="connectIdx('+i+')">Connect</button><button onclick="deleteIdx('+i+')" style="color:#f85149">Delete</button></div></div>'}document.getElementById('slist').innerHTML=h||'<p style="color:#8b949e;font-size:13px">No saved servers</p>'}
+function doSave(){var h=document.getElementById('host').value.trim(),p=document.getElementById('port').value.trim();if(!h||!p){alert('Enter IP and port');return}var s=getServers();s.push({host:h,port:p});saveServers(s);alert('Saved!')}
+function deleteIdx(i){var s=getServers();s.splice(i,1);saveServers(s)}
+function connectIdx(i){var s=getServers();document.getElementById('host').value=s[i].host;document.getElementById('port').value=s[i].port;doLogin(null)}
+function doLogin(e){if(e)e.preventDefault();var h=document.getElementById('host').value.trim(),p=document.getElementById('port').value.trim();if(!h||!p){alert('Enter IP and port');return false}var pr=window.location.protocol=='https:'?'wss:':'ws:',url=pr+'//'+h+':'+p;ws=new WebSocket(url);ws.onopen=function(){showDash(h,p)};ws.onerror=function(){alert('Cannot connect to '+h+':'+p)};return false}
+function showDash(h,p){document.getElementById('login').classList.add('h');document.getElementById('dash').classList.remove('h');var pr=window.location.protocol=='https:'?'wss:':'ws:',wsurl=pr+'//'+h+':'+p;var html='<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+h+':'+p+'</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:#0d1117;color:#c9d1d9;min-height:100vh}.m{max-width:1400px;margin:0 auto;padding:20px}.h{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#161b22;border:1px solid #30363d;border-radius:8px;margin-bottom:20px}.g{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}.d{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:15px}.d h3{color:#8b949e;font-size:11px;text-transform:uppercase;margin-bottom:8px}.d .v{font-size:24px;font-weight:600}.p{width:100%;height:6px;background:#21262d;border-radius:3px;margin-top:8px}.f{height:100%;background:#3fb950;border-radius:3px}.pa{background:#161b22;border:1px solid #30363d;border-radius:8px;margin-bottom:20px}.ph{padding:12px 15px;border-bottom:1px solid #30363d;display:flex;justify-content:space-between}.co{height:350px;overflow-y:auto;background:#0d1117;padding:12px;font-family:monospace;font-size:12px;line-height:1.5}.cl{padding:2px 0}.ts{color:#8b949e;margin-right:6px}.ll{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;background:rgba(86,140,253,0.15);color:#58a6ff;margin-right:6px}.le{background:rgba(248,81,73,0.15);color:#f85149}.ci{display:flex;gap:8px;padding:12px;border-top:1px solid #30363d}.ci input{flex:1;padding:10px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#c9d1d9}.b{padding:8px 14px;border-radius:6px;border:1px solid #30363d;background:#21262d;cursor:pointer}.b.bl{background:#58a6ff;color:#fff;border:none}.pl{max-height:200px;overflow-y:auto}.pi{padding:10px 15px;border-bottom:1px solid #30363d;display:flex;justify-content:space-between}.fm{padding:15px}.bc{display:flex;gap:6px;margin-bottom:12px;padding:8px 12px;background:#21262d;border-radius:6px;font-size:12px}.bi{color:#58a6ff;cursor:pointer}.tb{display:flex;gap:6px;margin-bottom:12px}.ft{width:100%;border-collapse:collapse}.ft th,.ft td{padding:8px 10px;text-align:left;border-bottom:1px solid #30363d;font-size:12px}.ft th{color:#8b949e;font-size:10px;text-transform:uppercase}.tr:hover{background:#21262d}.fd{color:#FFAA00;margin-right:6px}.ac{display:flex;gap:4px}.ab{padding:4px 8px;background:transparent;border:1px solid #30363d;border-radius:4px;color:#8b949e;cursor:pointer;font-size:10px}.mc0{color:#000}.mc1{color:#00a}.mc2{color:#0a0}.mc3{color:#0aa}.mc4{color:#a00}.mc5{color:#a0a}.mc6{color:#fa0}.mc7{color:#aaa}.mc8{color:#555}.mc9{color:#55f}.mca{color:#5f5}.mcb{color:#5ff}.mcc{color:#f55}.mcd{color:#f5f}.mce{color:#ff5}.mcf{color:#fff}@media(max-width:900px){.ma{grid-template-columns:1fr}}.ma{display:grid;grid-template-columns:2fr 1fr;gap:20px}</style></head><body><div class="m"><div class="h"><h1>'+h+':'+p+'</h1><span id="st" style="padding:5px 12px;border-radius:20px;font-size:11px;background:rgba(86,140,253,0.15);color:#58a6ff">Connecting...</span></div><div class="g"><div class="d"><h3>Players</h3><div class="v" id="pc">0/0</div><div class="p"><div class="f" id="pp" style="width:0%"></div></div></div><div class="d"><h3>CPU</h3><div class="v" id="cu">0%</div><div class="p"><div class="f" id="cup" style="width:0%"></div></div></div><div class="d"><h3>RAM</h3><div class="v" id="ru">0 MB</div><div class="p"><div class="f" id="rup" style="width:0%"></div></div></div><div class="d"><h3>TPS</h3><div class="v" id="tps">20.0</div><div class="p"><div class="f" id="tpsp" style="width:100%"></div></div></div></div><div class="ma"><div class="pa"><div class="ph"><span>Console</span><button class="b" onclick="clc()"><i class="fas fa-trash"></i></button></div><div class="co" id="co"><div class="cl"><span class="ts">[System]</span> Connecting...</div></div><div class="ci"><input type="text" id="cmd" placeholder="Type command..." onkeydown="if(event.key==\'Enter\')sc()"><button class="b bl" onclick="sc()"><i class="fas fa-paper-plane"></i></button></div></div><div><div class="pa" style="margin-bottom:20px"><div class="ph"><span>Players</span></div><div class="pl" id="pl"><div class="pi" style="color:#8b949e;justify-content:center">No players</div></div></div><div class="pa"><div class="ph"><span>Files</span></div><div class="fm"><div class="bc" id="bc"><span class="bi" onclick="nt()">/</span></div><div class="tb"><button class="b" onclick="up()"><i class="fas fa-arrow-up"></i></button><button class="b" onclick="rf()"><i class="fas fa-sync-alt"></i></button><button class="b bl" onclick="cf()"><i class="fas fa-folder-plus"></i></button><button class="b bl" onclick="upl()"><i class="fas fa-upload"></i></button><input type="file" id="uf" style="display:none" multiple onchange="uh(this)"></div><table class="ft"><thead><tr><th>Name</th><th>Size</th><th></th></tr></thead><tbody id="fl"><tr><td colspan="3" style="text-align:center;color:#8b949e">Loading...</td></tr></tbody></table></div></div></div></div><script>var w=new WebSocket("'+wsurl+'");var cp="";var sd="";w.onopen=function(){document.getElementById("st").textContent="Connected";document.getElementById("st").style.background="rgba(63,185,80,0.15)";document.getElementById("st").style.color="#3fb950"};w.onmessage=function(e){pm(JSON.parse(e.data))};w.onerror=function(){document.getElementById("st").textContent="Error";document.getElementById("st").style.background="rgba(248,81,73,0.15)";document.getElementById("st").style.color="#f85149";al("[ERROR] Connection failed")};w.onclose=function(){document.getElementById("st").textContent="Disconnected";document.getElementById("st").style.background="rgba(248,81,73,0.15)";document.getElementById("st").style.color="#f85149"};function pm(d){if(!d)return;switch(d.status){case 10:al(d.message,d.time);break;case 200:break;case 401:w.send(JSON.stringify({command:"LOGIN",params:""}));break;case 1000:upv(d.connectedPlayers,d.maxPlayers);break;case 1001:uc(d.usage);break;case 1002:ur(d.used,d.max);break;case 1003:ut(d.tps);break;case 2000:ufl(d);break;case 2001:ef(d);break;case 200:case 2003:if(d.content)hd(d);break}}function al(m,t){if(!m)return;var o=document.getElementById("co");var l=document.createElement("div");l.className="cl";var lc="";if(m.indexOf("[ERROR]")>-1||m.indexOf("[SEVERE]")>-1)lc="le";l.innerHTML="<span class=ts>"+(t||new Date().toLocaleTimeString())+"</span><span class=ll "+lc+">"+gl(m)+"</span>"+fm(m);o.appendChild(l);o.scrollTop=o.scrollHeight}function gl(m){if(m.indexOf("[ERROR]")>-1||m.indexOf("[SEVERE]")>-1)return"ERROR";if(m.indexOf("[WARN]")>-1)return"WARN";if(m.indexOf("[INFO]")>-1)return"INFO";return""}function fm(m){if(!m)return"";m=m.replace(/</g,"&lt;");var c="0123456789abcdef";for(var i=0;i<c.length;i++){m=m.replace(new RegExp("§"+c[i],"g"),"</span><span class=mc"+c[i]+">")}return'<span class=mcf>'+m+"</span>"}function sc(){var i=document.getElementById("cmd");var c=i.value.trim();if(!c||w.readyState!==WebSocket.OPEN)return;w.send(JSON.stringify({command:"EXEC",params:c}));i.value="";al("[CONSOLE] "+c)}function clc(){document.getElementById("co").innerHTML=""}function upv(o,m){document.getElementById("pc").textContent=o+"/"+m;document.getElementById("pp").style.width=(o/m*100)+"%"}function uc(u){document.getElementById("cu").textContent=Math.round(u)+"%";document.getElementById("cup").style.width=u+"%"}function ur(u,m){document.getElementById("ru").textContent=Math.round(u)+"MB/"+Math.round(m)+"MB";document.getElementById("rup").style.width=(u/m*100)+"%"}function ut(t){document.getElementById("tps").textContent=t.toFixed(1);document.getElementById("tpsp").style.width=(t/20*100)+"%"}function lf(p){if(w.readyState!==WebSocket.OPEN)return;cp=p||sd||"";w.send(JSON.stringify({command:"FILE_LIST",params:cp}))}function ufl(d){if(!d||!d.currentPath)return;if(sd==="")sd=d.currentPath;cp=d.currentPath;bc();var tb=document.getElementById("fl");if(!d.files){tb.innerHTML="<tr><td colspan=3 style=text-align:center;color:#8b949e>No files</td></tr>";return}var fs=JSON.parse(d.files);if(fs.length===0){tb.innerHTML="<tr><td colspan=3 style=text-align:center;color:#8b949e>Empty</td></tr>";return}fs.sort(function(a,b){return a.is_folder===b.is_folder?a.name.localeCompare(b.name):a.is_folder?-1:1});tb.innerHTML=fs.map(function(f){var pa=cp===sd?cp+f.name:cp+"/"+f.name;return"<tr class=tr onclick=\""+(f.is_folder?"lf(\'"+pa+"\')":"vf(\'"+f.name+"\')")+"\"><td><i class=\"fas "+(f.is_folder?"fa-folder fd":"fa-file")+"\"></i> "+f.name+"</td><td>"+(f.is_folder?"-":fsz(f.size))+'</td><td><div class=ac>'+(f.is_folder?"":'<button class=ab onclick="event.stopPropagation();df(\\\''+f.name+'\\\')"><i class="fas fa-download"></i></button>')+'<button class=ab onclick="event.stopPropagation();delf(\\\''+f.name+'\\\')"><i class="fas fa-trash"></i></button></div></td></tr>'}).join("")}function fsz(b){if(!b)return"0 B";var k=1024;var s=["B","KB","MB","GB"];var i=Math.floor(Math.log(b)/Math.log(k));return parseFloat((b/Math.pow(k,i)).toFixed(1))+" "+s[i]}function bc(){var b=document.getElementById("bc");if(cp===sd||!cp){b.innerHTML="<span class=bi onclick=nt()>/</span>";return}var r=cp.replace(sd,"").replace(/^\\//,"");var ps=r.split("/");var pa=sd;var h="<span class=bi onclick=nt()>/</span>";for(var j=0;j<ps.length;j++){pa+="/"+ps[j];h+='<span class=bi onclick="lf(\\\''+pa+'\\\')">'+ps[j]+"</span>/"}b.innerHTML=h}function nt(){lf(sd)}function up(){var l=cp.lastIndexOf("/");if(l>sd.length)lf(cp.substring(0,l));else if(cp!==sd)lf(sd)}function rf(){lf(cp)}function vf(n){var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_READ",params:JSON.stringify({path:pa})}))}function ef(d){if(!d||!d.content)return;var c=JSON.parse(d.content);var nc=prompt("Edit "+c.name+":",c.content);if(nc!==null){w.send(JSON.stringify({command:"FILE_WRITE",params:JSON.stringify({path:c.path,content:nc})}))}}function df(n){var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_DOWNLOAD",params:JSON.stringify({path:pa})}))}function hd(d){if(!d||!d.content)return;var c=JSON.parse(d.content);var bl=new Blob([new Uint8Array(atob(c.content).split("").map(function(x){return x.charCodeAt(0)}))];var a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=c.filename;a.click()}function delf(n){if(!confirm("Delete "+n+"?"))return;var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_DELETE",params:JSON.stringify({path:pa})}))}function cf(){var n=prompt("Folder name:");if(n){var pa=cp===sd?cp+n:cp+"/"+n;w.send(JSON.stringify({command:"FILE_CREATE_FOLDER",params:JSON.stringify({path:pa})}))}}function upl(){document.getElementById("uf").click()}function uh(inp){Array.from(inp.files).forEach(function(f,i){var r=new FileReader();r.onload=function(e){var pa=cp===sd?cp+f.name:cp+"/"+f.name;w.send(JSON.stringify({command:"FILE_WRITE",params:JSON.stringify({path:pa,content:e.target.result.split(",")[1]})}));if(i===inp.files.length-1)rf()};r.readAsDataURL(f)})}<\/script></body></html>';var b=new Blob([html],{type:"text/html"});document.getElementById("frame").src=URL.createObjectURL(b)}
+initTheme();renderServers();
+</script>
 </body>
 </html>
