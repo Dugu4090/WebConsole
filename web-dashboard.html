@@ -3,7 +3,388 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebConsole - Dashboard</title>
+    <title>WebConsole - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --border-color: #30363d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-yellow: #d29922;
+            --accent-red: #f85149;
+        }
+        
+        body.light-mode {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --border-color: #d0d7de;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --accent-blue: #0969da;
+            --accent-green: #1a7f37;
+            --accent-yellow: #9a6700;
+            --accent-red: #cf222e;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header i {
+            font-size: 48px;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+        }
+        
+        .login-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: var(--accent-blue);
+            color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+        
+        .servers-list {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+        
+        .servers-list h3 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        
+        .server-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .server-item:hover {
+            border-color: var(--accent-blue);
+        }
+        
+        .server-item-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .server-item-info i {
+            color: var(--accent-green);
+        }
+        
+        .server-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .server-item-actions button {
+            padding: 6px 10px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .server-item-actions button:hover {
+            background: var(--border-color);
+        }
+        
+        .server-item-actions button.delete:hover {
+            background: rgba(248, 81, 73, 0.15);
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+        
+        .hidden { display: none !important; }
+        
+        .dashboard-view { width: 100%; max-width: 1400px; margin: 0 auto; padding: 20px; }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+    
+    <div class="login-container" id="login-view">
+        <div class="login-header">
+            <i class="fas fa-terminal"></i>
+            <h1>WebConsole</h1>
+            <p>Connect to your Minecraft server</p>
+        </div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label>Server Address</label>
+                <input type="text" id="server-host" placeholder="45.59.132.155" required>
+            </div>
+            <div class="form-group">
+                <label>WebSocket Port</label>
+                <input type="number" id="server-port" placeholder="8080" value="8080" required>
+            </div>
+            <div class="form-group">
+                <label>Username (optional)</label>
+                <input type="text" id="username" placeholder="Leave empty for console">
+            </div>
+            <div class="form-group">
+                <label>Password (if required)</label>
+                <input type="password" id="password" placeholder="Enter password">
+            </div>
+            <button type="submit" class="btn">Connect</button>
+            <button type="button" class="btn btn-secondary" onclick="saveServer()">Save as Server</button>
+        </form>
+        
+        <div class="servers-list" id="servers-section">
+            <h3>Saved Servers</h3>
+            <div id="servers-container"></div>
+        </div>
+    </div>
+    
+    <div class="dashboard-view hidden" id="dashboard-view">
+        <iframe id="dashboard-frame" style="width: 100%; height: calc(100vh - 40px); border: none; border-radius: 8px;"></iframe>
+    </div>
+    
+    <script>
+        let ws = null;
+        let currentServer = null;
+        
+        function initTheme() {
+            const saved = localStorage.getItem('webconsole-theme') || 'dark';
+            if (saved === 'light') {
+                document.body.classList.add('light-mode');
+                document.getElementById('theme-icon').className = 'fas fa-sun';
+            }
+        }
+        
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            if (body.classList.contains('light-mode')) {
+                body.classList.remove('light-mode');
+                localStorage.setItem('webconsole-theme', 'dark');
+                icon.className = 'fas fa-moon';
+            } else {
+                body.classList.add('light-mode');
+                localStorage.setItem('webconsole-theme', 'light');
+                icon.className = 'fas fa-sun';
+            }
+        }
+        
+        function getServers() {
+            return JSON.parse(localStorage.getItem('webconsole-servers') || '[]');
+        }
+        
+        function saveServers(servers) {
+            localStorage.setItem('webconsole-servers', JSON.stringify(servers));
+            renderServers();
+        }
+        
+        function renderServers() {
+            const servers = getServers();
+            const container = document.getElementById('servers-container');
+            
+            if (servers.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); font-size: 13px;">No saved servers</p>';
+                return;
+            }
+            
+            container.innerHTML = servers.map((s, i) => `
+                <div class="server-item">
+                    <div class="server-item-info">
+                        <i class="fas fa-server"></i>
+                        <span>${s.host}:${s.port}</span>
+                    </div>
+                    <div class="server-item-actions">
+                        <button onclick="event.stopPropagation(); connectToServer(${i})">Connect</button>
+                        <button class="delete" onclick="event.stopPropagation(); deleteServer(${i})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function saveServer() {
+            const host = document.getElementById('server-host').value.trim();
+            const port = document.getElementById('server-port').value.trim();
+            
+            if (!host || !port) {
+                alert('Please enter server address and port');
+                return;
+            }
+            
+            const servers = getServers();
+            servers.push({ host, port, name: `${host}:${port}` });
+            saveServers(servers);
+            
+            document.getElementById('server-host').value = '';
+            document.getElementById('server-port').value = '8080';
+        }
+        
+        function deleteServer(index) {
+            const servers = getServers();
+            servers.splice(index, 1);
+            saveServers(servers);
+        }
+        
+        function connectToServer(index) {
+            const servers = getServers();
+            const server = servers[index];
+            
+            document.getElementById('server-host').value = server.host;
+            document.getElementById('server-port').value = server.port;
+            
+            connectToServerDirect(server.host, server.port);
+        }
+        
+        function connectToServerDirect(host, port) {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${host}:${port}`;
+            
+            console.log('Connecting to:', wsUrl);
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = function() {
+                console.log('Connected!');
+                showDashboard(host, port);
+            };
+            
+            ws.onerror = function(error) {
+                console.error('Connection error:', error);
+                alert('Failed to connect to server. Check the address and port.');
+            };
+            
+            ws.onclose = function() {
+                console.log('Disconnected');
+            };
+        }
+        
+        function showDashboard(host, port) {
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('dashboard-view').classList.remove('hidden');
+            
+            const html = generateDashboardHTML(host, port);
+            const blob = new Blob([html], {type: 'text/html'});
+            document.getElementById('dashboard-frame').src = URL.createObjectURL(blob);
+        }
+        
+        function generateDashboardHTML(host, port) {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebConsole - ${host}:${port}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -36,20 +417,6 @@
             --console-bg: #0d1117;
         }
         
-        body.light-mode {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f6f8fa;
-            --bg-tertiary: #eaeef2;
-            --border-color: #d0d7de;
-            --text-primary: #24292f;
-            --text-secondary: #57606a;
-            --accent-blue: #0969da;
-            --accent-green: #1a7f37;
-            --accent-yellow: #9a6700;
-            --accent-red: #cf222e;
-            --console-bg: #ffffff;
-        }
-        
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -71,6 +438,19 @@
             margin-bottom: 20px;
             border-radius: 8px;
         }
+        
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        
+        .back-btn {
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        
+        .back-btn:hover { background: var(--border-color); }
         
         .header h1 { font-size: 20px; font-weight: 600; }
         
@@ -96,12 +476,9 @@
             background: var(--bg-tertiary);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
-            transition: all 0.2s ease;
         }
         
-        .btn:hover { background: var(--border-color); }
         .btn-primary { background: var(--accent-blue); color: white; border: none; }
-        .btn-primary:hover { background: #4393e6; }
         .btn-icon { padding: 8px 10px; }
         
         .stats-grid {
@@ -129,9 +506,7 @@
         
         .main-content { display: grid; grid-template-columns: 1fr; gap: 20px; }
         
-        @media (min-width: 1024px) {
-            .main-content { grid-template-columns: 2fr 1fr; }
-        }
+        @media (min-width: 1024px) { .main-content { grid-template-columns: 2fr 1fr; } }
         
         .panel {
             background: var(--bg-secondary);
@@ -155,7 +530,7 @@
             overflow-y: auto;
             background: var(--console-bg);
             padding: 12px;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             line-height: 1.5;
         }
@@ -219,46 +594,23 @@
         .file-row { cursor: pointer; }
         .file-folder { color: var(--mc-gold); margin-right: 6px; }
         .file-actions { display: flex; gap: 4px; }
-        .file-action-btn { padding: 4px 8px; background: transparent; border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-secondary); cursor: pointer; font-size: 10px; transition: all 0.2s ease; }
-        .file-action-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .file-action-btn { padding: 4px 8px; background: transparent; border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-secondary); cursor: pointer; font-size: 10px; }
+        .file-action-btn:hover { background: var(--bg-tertiary); }
         
-        .theme-btn {
-            padding: 8px 12px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-        .theme-btn:hover { background: var(--border-color); }
-        
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-primary); }
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-        
-        @media (max-width: 600px) {
-            .container { padding: 10px; }
-            .header { padding: 12px 15px; flex-direction: column; gap: 10px; text-align: center; }
-            .header h1 { font-size: 18px; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .stat-value { font-size: 20px; }
-            .command-input-wrapper { flex-direction: column; }
-            .panel-header { padding: 10px 12px; }
-            .console-output { height: 250px; font-size: 11px; }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-terminal"></i> WebConsole</h1>
+            <div class="header-left">
+                <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+                <h1><i class="fas fa-server"></i> ${host}:${port}</h1>
+            </div>
             <div class="header-actions">
                 <span id="connection-badge" class="status-badge status-connecting">Connecting...</span>
-                <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">
-                    <i class="fas fa-moon"></i>
-                </button>
             </div>
         </div>
         
@@ -289,12 +641,10 @@
             <div class="panel">
                 <div class="panel-header">
                     <span class="panel-title"><i class="fas fa-terminal"></i> Console</span>
-                    <div>
-                        <button class="btn btn-icon" onclick="clearConsole()"><i class="fas fa-trash"></i></button>
-                    </div>
+                    <button class="btn btn-icon" onclick="clearConsole()"><i class="fas fa-trash"></i></button>
                 </div>
                 <div class="console-output" id="console-output">
-                    <div class="console-line"><span class="timestamp">[System]</span> Connecting to server...</div>
+                    <div class="console-line"><span class="timestamp">[System]</span> Connecting to ${host}:${port}...</div>
                 </div>
                 <div class="command-input-wrapper">
                     <input type="text" class="command-input" id="command-input" placeholder="Type command..." autocomplete="off">
@@ -319,10 +669,10 @@
                     <div class="file-manager">
                         <div class="breadcrumb" id="file-breadcrumb"><span class="breadcrumb-item" onclick="navigateToRoot()">/</span></div>
                         <div class="file-toolbar">
-                            <button class="btn btn-icon" onclick="goUp()" title="Up"><i class="fas fa-arrow-up"></i></button>
-                            <button class="btn btn-icon" onclick="refreshFiles()" title="Refresh"><i class="fas fa-sync-alt"></i></button>
-                            <button class="btn btn-primary btn-icon" onclick="showCreateFolder()" title="New Folder"><i class="fas fa-folder-plus"></i></button>
-                            <button class="btn btn-primary btn-icon" onclick="triggerUpload()" title="Upload"><i class="fas fa-upload"></i></button>
+                            <button class="btn btn-icon" onclick="goUp()"><i class="fas fa-arrow-up"></i></button>
+                            <button class="btn btn-icon" onclick="refreshFiles()"><i class="fas fa-sync-alt"></i></button>
+                            <button class="btn btn-primary btn-icon" onclick="showCreateFolder()"><i class="fas fa-folder-plus"></i></button>
+                            <button class="btn btn-primary btn-icon" onclick="triggerUpload()"><i class="fas fa-upload"></i></button>
                             <input type="file" id="file-upload" style="display: none;" multiple onchange="handleUpload(this)">
                         </div>
                         <table class="file-table">
@@ -336,71 +686,35 @@
     </div>
     
     <script>
+        const WS_URL = "${protocol}//${host}:${port}";
         let ws = null;
         let currentPath = '';
         let serverDirectory = '';
-        let isLoggedIn = false;
-        
-        function initTheme() {
-            const savedTheme = localStorage.getItem('webconsole-theme') || 'dark';
-            const btn = document.getElementById('theme-btn');
-            
-            if (savedTheme === 'light') {
-                document.body.classList.add('light-mode');
-                btn.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                document.body.classList.remove('light-mode');
-                btn.innerHTML = '<i class="fas fa-moon"></i>';
-            }
-        }
-        
-        function toggleTheme() {
-            const body = document.body;
-            const btn = document.getElementById('theme-btn');
-            const isLight = body.classList.contains('light-mode');
-            
-            if (isLight) {
-                body.classList.remove('light-mode');
-                localStorage.setItem('webconsole-theme', 'dark');
-                btn.innerHTML = '<i class="fas fa-moon"></i>';
-            } else {
-                body.classList.add('light-mode');
-                localStorage.setItem('webconsole-theme', 'light');
-                btn.innerHTML = '<i class="fas fa-sun"></i>';
-            }
-        }
         
         function connect() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const host = window.location.hostname;
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            let wsPort = urlParams.get('ws') || window.location.port || '8080';
-            
-            console.log('Connecting to ' + protocol + '//' + host + ':' + wsPort);
-            ws = new WebSocket(protocol + '//' + host + ':' + wsPort);
+            console.log('Connecting to:', WS_URL);
+            ws = new WebSocket(WS_URL);
             
             ws.onopen = function() {
-                console.log('WebSocket connected');
-                updateStatus('connecting', 'Connecting...');
+                updateStatus('connected', 'Connected');
             };
             
             ws.onmessage = function(event) {
                 try {
                     processMessage(JSON.parse(event.data));
                 } catch (e) {
-                    console.error('Error parsing message:', e);
+                    console.error('Error:', e);
                 }
             };
             
             ws.onerror = function(error) {
-                console.error('WebSocket error:', error);
                 updateStatus('disconnected', 'Connection Error');
+                addConsoleLine('[ERROR] Failed to connect to server');
             };
             
             ws.onclose = function() {
                 updateStatus('disconnected', 'Disconnected');
-                setTimeout(connect, 3000);
+                addConsoleLine('[System] Disconnected from server');
             };
         }
         
@@ -409,14 +723,9 @@
             
             switch(data.status) {
                 case 10: addConsoleLine(data.message, data.time); break;
-                case 200: 
-                    isLoggedIn = true; 
-                    updateStatus('connected', 'Connected'); 
-                    break;
+                case 200: updateStatus('connected', 'Connected'); break;
                 case 401: 
-                    if (ws && ws.readyState === WebSocket.OPEN) {
-                        ws.send(JSON.stringify({command: 'LOGIN', params: ''}));
-                    }
+                    ws.send(JSON.stringify({command: 'LOGIN', params: ''}));
                     break;
                 case 1000: updatePlayers(data.connectedPlayers, data.maxPlayers); break;
                 case 1001: updateCpu(data.usage); break;
@@ -425,7 +734,6 @@
                 case 2000: updateFileList(data); break;
                 case 2001: editFile(data); break;
                 case 200: case 2003: if(data.content) handleDownload(data); break;
-                case 400: case 403: case 404: case 500: alert(data.message); break;
             }
         }
         
@@ -437,7 +745,6 @@
         
         function addConsoleLine(msg, time) {
             if (!msg) return;
-            
             const output = document.getElementById('console-output');
             const line = document.createElement('div');
             line.className = 'console-line';
@@ -446,12 +753,8 @@
             if (msg.includes('[ERROR]') || msg.includes('[SEVERE]')) logClass = 'log-error';
             else if (msg.includes('[WARN]')) logClass = 'log-warn';
             
-            const threadMatch = msg.match(/\[([^\]]+)\/(\w+)\]/);
-            let threadHtml = threadMatch ? '<span class="thread-name">[' + threadMatch[1] + ']</span> ' : '';
-            
             line.innerHTML = '<span class="timestamp">' + (time || new Date().toLocaleTimeString()) + '</span>' +
-                '<span class="log-level ' + logClass + '">' + getLogLevel(msg) + '</span>' +
-                threadHtml + formatMcCodes(msg);
+                '<span class="log-level ' + logClass + '">' + getLogLevel(msg) + '</span>' + formatMcCodes(msg);
             
             output.appendChild(line);
             output.scrollTop = output.scrollHeight;
@@ -460,7 +763,6 @@
         function getLogLevel(msg) {
             if (msg.includes('[ERROR]') || msg.includes('[SEVERE]')) return 'ERROR';
             if (msg.includes('[WARN]')) return 'WARN';
-            if (msg.includes('[DEBUG]')) return 'DEBUG';
             if (msg.includes('[INFO]')) return 'INFO';
             return '';
         }
@@ -481,10 +783,9 @@
             const input = document.getElementById('command-input');
             const cmd = input.value.trim();
             if (!cmd || !ws || ws.readyState !== WebSocket.OPEN) return;
-            
             ws.send(JSON.stringify({command: 'EXEC', params: cmd}));
             input.value = '';
-            addConsoleLine('[CONSOLE] ' + cmd, new Date().toLocaleTimeString());
+            addConsoleLine('[CONSOLE] ' + cmd);
         }
         
         document.getElementById('command-input').addEventListener('keydown', function(e) {
@@ -495,57 +796,40 @@
             document.getElementById('players-count').textContent = online + ' / ' + max;
             const p = document.getElementById('players-progress');
             p.style.width = (online / max * 100) + '%';
-            p.className = 'progress-fill ' + (online / max > 0.8 ? 'progress-high' : online / max > 0.5 ? 'progress-medium' : 'progress-low');
         }
         
         function updateCpu(usage) {
             document.getElementById('cpu-usage').textContent = Math.round(usage) + '%';
-            const p = document.getElementById('cpu-progress');
-            p.style.width = usage + '%';
-            p.className = 'progress-fill ' + (usage > 80 ? 'progress-high' : usage > 50 ? 'progress-medium' : 'progress-low');
+            document.getElementById('cpu-progress').style.width = usage + '%';
         }
         
         function updateRam(used, max) {
             document.getElementById('ram-usage').textContent = Math.round(used) + ' MB / ' + Math.round(max) + ' MB';
-            const p = document.getElementById('ram-progress');
-            p.style.width = (used / max * 100) + '%';
-            p.className = 'progress-fill ' + (used / max > 0.8 ? 'progress-high' : used / max > 0.5 ? 'progress-medium' : 'progress-low');
+            document.getElementById('ram-progress').style.width = (used / max * 100) + '%';
         }
         
         function updateTps(tps) {
             document.getElementById('tps-value').textContent = tps.toFixed(1);
-            const p = document.getElementById('tps-progress');
-            p.style.width = (tps / 20 * 100) + '%';
-            p.className = 'progress-fill ' + (tps < 10 ? 'progress-high' : tps < 15 ? 'progress-medium' : 'progress-low');
+            document.getElementById('tps-progress').style.width = (tps / 20 * 100) + '%';
         }
         
         function loadFiles(path) {
             if (!ws || ws.readyState !== WebSocket.OPEN) return;
-            
             currentPath = path || serverDirectory || '';
             ws.send(JSON.stringify({command: 'FILE_LIST', params: currentPath}));
-            updateBreadcrumb();
         }
         
         function updateFileList(data) {
             if (!data || !data.currentPath) return;
-            
             if (serverDirectory === '') serverDirectory = data.currentPath;
             currentPath = data.currentPath;
             updateBreadcrumb();
             
             const tbody = document.getElementById('file-list');
-            if (!data.files) {
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-secondary);">No files</td></tr>';
-                return;
-            }
+            if (!data.files) return;
             
             let files;
-            try {
-                files = JSON.parse(data.files);
-            } catch (e) {
-                files = [];
-            }
+            try { files = JSON.parse(data.files); } catch(e) { files = []; }
             
             if (files.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-secondary);">Empty</td></tr>';
@@ -554,22 +838,11 @@
             
             files.sort((a, b) => (a.is_folder === b.is_folder) ? a.name.localeCompare(b.name) : (a.is_folder ? -1 : 1));
             
-            tbody.innerHTML = files.map(f => `
-                <tr class="file-row" onclick="${f.is_folder ? 'loadFiles(\'' + (currentPath === serverDirectory ? currentPath + f.name : currentPath + '/' + f.name) + '\')' : 'viewFile(\'' + f.name + '\')'}">
-                    <td><i class="fas ${f.is_folder ? 'fa-folder file-folder' : 'fa-file'}"></i> ${f.name}</td>
-                    <td>${f.is_folder ? '-' : formatSize(f.size)}</td>
-                    <td>
-                        <div class="file-actions">
-                            ${!f.is_folder ? '<button class="file-action-btn" onclick="event.stopPropagation(); downloadFile(\'' + f.name + '\')"><i class="fas fa-download"></i></button>' : ''}
-                            <button class="file-action-btn" onclick="event.stopPropagation(); deleteFile(\'' + f.name + '\')"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = files.map(f => '<tr class="file-row" onclick="' + (f.is_folder ? 'loadFiles(\\\'' + (currentPath === serverDirectory ? currentPath + f.name : currentPath + '/' + f.name) + '\\\');' : 'viewFile(\\\'' + f.name + '\\\');') + '"><td><i class="fas ' + (f.is_folder ? 'fa-folder file-folder' : 'fa-file') + '"></i> ' + f.name + '</td><td>' + (f.is_folder ? '-' : formatSize(f.size)) + '</td><td><div class="file-actions">' + (!f.is_folder ? '<button class="file-action-btn" onclick="event.stopPropagation(); downloadFile(\\\'' + f.name + '\\\')"><i class="fas fa-download"></i></button>' : '') + '<button class="file-action-btn" onclick="event.stopPropagation(); deleteFile(\\\'' + f.name + '\\\')"><i class="fas fa-trash"></i></button></div></td></tr>').join('');
         }
         
         function formatSize(bytes) {
-            if (!bytes || bytes === 0) return '0 B';
+            if (!bytes) return '0 B';
             const k = 1024;
             const sizes = ['B', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -581,11 +854,11 @@
             if (currentPath === serverDirectory || !currentPath) {
                 bc.innerHTML = '<span class="breadcrumb-item" onclick="navigateToRoot()">/</span>';
             } else {
-                const rel = currentPath.replace(serverDirectory, '').replace(/^\//, '');
+                const rel = currentPath.replace(serverDirectory, '').replace(/^\\//, '');
                 const parts = rel.split('/');
                 let path = serverDirectory;
                 let html = '<span class="breadcrumb-item" onclick="navigateToRoot()">/</span>';
-                parts.forEach(p => { path += '/' + p; html += '<span class="breadcrumb-item" onclick="loadFiles(\'' + path + '\')">' + p + '</span>/'; });
+                parts.forEach(p => { path += '/' + p; html += '<span class="breadcrumb-item" onclick="loadFiles(\\\'' + path + '\\\')">' + p + '</span>/'; });
                 bc.innerHTML = html;
             }
         }
@@ -626,7 +899,7 @@
         function handleDownload(data) {
             if (!data || !data.content) return;
             const c = JSON.parse(data.content);
-            const blob = new Blob([new Uint8Array(atob(c.content).split('').map(c => c.charCodeAt(0))]);
+            const blob = new Blob([new Uint8Array(atob(c.content).split('').map(c => c.charCodeAt(0)))]);
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = c.filename;
@@ -669,13 +942,42 @@
             });
         }
         
-        function clearConsole() { 
-            document.getElementById('console-output').innerHTML = ''; 
+        function clearConsole() { document.getElementById('console-output').innerHTML = ''; }
+        
+        function goBack() {
+            window.parent.postMessage({action: 'goBack'}, '*');
         }
         
-        // Initialize
-        initTheme();
         connect();
+    </script>
+</body>
+</html>`;
+        }
+        
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const host = document.getElementById('server-host').value.trim();
+            const port = document.getElementById('server-port').value.trim();
+            
+            if (!host || !port) {
+                alert('Please enter server address and port');
+                return;
+            }
+            
+            connectToServerDirect(host, port);
+        });
+        
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.action === 'goBack') {
+                if (ws) ws.close();
+                document.getElementById('dashboard-view').classList.add('hidden');
+                document.getElementById('login-view').classList.remove('hidden');
+                document.getElementById('dashboard-frame').src = '';
+            }
+        });
+        
+        initTheme();
+        renderServers();
     </script>
 </body>
 </html>
