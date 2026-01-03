@@ -1,6 +1,7 @@
 /root/WebConsole/src/es/mesacarlos/webconsole/util/FileManager.java
 /root/WebConsole/src/es/mesacarlos/webconsole/websocket/response/LoggedIn.java
 /root/WebConsole/src/es/mesacarlos/webconsole/websocket/response/LoginRequired.java
+/root/WebConsole/src/es/mesacarlos/webconsole/web/StaticHandler.java
 /root/WebConsole/src/es/mesacarlos/webconsole/websocket/response/CpuUsage.java
 /root/WebConsole/src/es/mesacarlos/webconsole/websocket/command/FileManagement/FileDownloadCommand.java
 /root/WebConsole/src/es/mesacarlos/webconsole/util/TpsTracker.java

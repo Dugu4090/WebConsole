@@ -36,13 +36,14 @@ es/mesacarlos/webconsole/websocket/response/Tps.class
 es/mesacarlos/webconsole/websocket/response/LoggedIn$1.class
 es/mesacarlos/webconsole/websocket/command/FileManagement/FileCreateFolderCommand.class
 es/mesacarlos/webconsole/WebConsole$1.class
-es/mesacarlos/webconsole/websocket/response/LoggedIn.class
 es/mesacarlos/webconsole/util/JsonUtils.class
+es/mesacarlos/webconsole/websocket/response/LoggedIn.class
 es/mesacarlos/webconsole/websocket/command/ReadLogFileCommand.class
 es/mesacarlos/webconsole/websocket/response/Players.class
 es/mesacarlos/webconsole/websocket/response/FileManagement/FileDownloadResponse.class
 es/mesacarlos/webconsole/auth/ConnectedUser.class
 es/mesacarlos/webconsole/websocket/command/RamUsageCommand.class
+es/mesacarlos/webconsole/web/StaticHandler.class
 es/mesacarlos/webconsole/websocket/command/FileManagement/FileDownloadCommand.class
 es/mesacarlos/webconsole/websocket/command/FileManagement/FileReadCommand.class
 es/mesacarlos/webconsole/websocket/response/JSONOutput.class

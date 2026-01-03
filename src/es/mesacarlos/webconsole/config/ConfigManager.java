@@ -181,4 +181,12 @@ public class ConfigManager {
 		return config.getLong("fileManager.maxDownloadSizeMB", 50);
 	}
 	
+	/**
+	 * Get the HTTP server port
+	 * @return port number
+	 */
+	public int getPort() {
+		return config.getInt("port", 8080);
+	}
+	
 }
