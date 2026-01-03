@@ -117,7 +117,27 @@ public class WebConsole extends JavaPlugin {
     private void startHTTPServer() throws IOException {
         int httpPort = ConfigManager.getInstance().getPort();
         
-        httpServer = HttpServer.create(new InetSocketAddress(httpPort), 0);
+        // Try to create HTTP server, fallback to alternative ports if needed
+        HttpServer server = null;
+        int[] portsToTry = {httpPort, httpPort + 1, httpPort + 2, 8080, 8090, 8100};
+        
+        for (int port : portsToTry) {
+            try {
+                server = HttpServer.create(new InetSocketAddress(port), 0);
+                httpPort = port;
+                break;
+            } catch (java.net.BindException e) {
+                Bukkit.getLogger().warning("[WebConsole] Port " + port + " is in use, trying next port...");
+                continue;
+            }
+        }
+        
+        if (server == null) {
+            Bukkit.getLogger().severe("[WebConsole] Failed to start HTTP server: all ports in use");
+            return;
+        }
+        
+        httpServer = server;
         httpServer.setExecutor(Executors.newCachedThreadPool());
         
         // Register static file handler
@@ -125,7 +145,11 @@ public class WebConsole extends JavaPlugin {
         
         httpServer.start();
         
-        Bukkit.getLogger().info("[WebConsole] Web dashboard started on http://0.0.0.0:" + httpPort);
+        if (httpPort == ConfigManager.getInstance().getPort()) {
+            Bukkit.getLogger().info("[WebConsole] Web dashboard started on http://0.0.0.0:" + httpPort);
+        } else {
+            Bukkit.getLogger().warning("[WebConsole] Web dashboard started on http://0.0.0.0:" + httpPort + " (configured port was " + ConfigManager.getInstance().getPort() + ")");
+        }
         Bukkit.getLogger().info("[WebConsole] Access the dashboard at: http://YOUR_SERVER_IP:" + httpPort);
     }
 

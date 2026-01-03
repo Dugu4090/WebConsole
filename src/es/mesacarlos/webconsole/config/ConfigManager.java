@@ -2,6 +2,7 @@ package es.mesacarlos.webconsole.config;
 
 import java.net.InetSocketAddress;
 import java.util.*;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -43,9 +44,9 @@ public class ConfigManager {
 		config.addDefault("language", "en");
 		
 		// File Manager config
-		config.addDefault("fileManager", new java.util.HashMap<String, Object>());
-		config.set("fileManager.maxDownloadSizeMB", 50);
-		config.addDefault("fileManager.maxDownloadSizeMB", 50);
+		HashMap<String, Object> fileManagerDefaults = new HashMap<>();
+		fileManagerDefaults.put("maxDownloadSizeMB", 50);
+		config.addDefault("fileManager", fileManagerDefaults);
 		
 		//Create passwords section if it does not exist
 		ConfigurationSection passwordsSection = config.getConfigurationSection("passwords");

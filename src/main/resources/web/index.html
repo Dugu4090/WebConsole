@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebConsole - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* CSS Variables for Light/Dark Mode */
         :root {
             --bg-primary: #0d1117;
             --bg-secondary: #161b22;
@@ -32,47 +34,56 @@
             --mc-purple: #FF55FF;
             --mc-yellow: #FFFF55;
             --mc-white: #FFFFFF;
+            --console-bg: #0d1117;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* Light Mode Variables */
+        body.light-mode {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --border-color: #d0d7de;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --accent-blue: #0969da;
+            --accent-green: #1a7f37;
+            --accent-yellow: #9a6700;
+            --accent-red: #cf222e;
+            --console-bg: #ffffff;
         }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
         }
         
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 15px 20px;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 20px;
             border-radius: 8px;
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
         
-        .header h1 {
-            font-size: 24px;
-            font-weight: 600;
-        }
+        .header h1 { font-size: 20px; font-weight: 600; }
+        
+        .header-actions { display: flex; gap: 10px; align-items: center; }
         
         .status-badge {
-            padding: 6px 12px;
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
         }
         
@@ -80,77 +91,8 @@
         .status-disconnected { background: rgba(248, 81, 73, 0.15); color: var(--accent-red); }
         .status-connecting { background: rgba(86, 140, 253, 0.15); color: var(--accent-blue); }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-        }
-        
-        .stat-card h3 {
-            color: var(--text-secondary);
-            font-size: 12px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-        
-        .stat-value {
-            font-size: 28px;
-            font-weight: 600;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        
-        .progress-fill { height: 100%; border-radius: 4px; }
-        .progress-low { background: var(--accent-green); }
-        .progress-medium { background: var(--accent-yellow); }
-        .progress-high { background: var(--accent-red); }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-        
-        @media (max-width: 1024px) {
-            .main-content { grid-template-columns: 1fr; }
-        }
-        
-        .panel {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .panel-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        
         .btn {
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 6px;
             font-size: 13px;
             cursor: pointer;
@@ -158,29 +100,80 @@
             background: var(--bg-tertiary);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
         }
         
         .btn:hover { background: var(--border-color); }
         .btn-primary { background: var(--accent-blue); color: white; border: none; }
         .btn-primary:hover { background: #4393e6; }
+        .btn-icon { padding: 8px 12px; }
         
-        .console-output {
-            height: 400px;
-            overflow-y: auto;
-            background: #0d1117;
-            padding: 15px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            line-height: 1.6;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
         }
         
-        .console-line { padding: 2px 0; }
-        .timestamp { color: #6e7681; margin-right: 8px; }
-        .log-level { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 8px; min-width: 50px; text-align: center; }
-        .log-info { background: rgba(56, 139, 253, 0.15); color: #58a6ff; }
-        .log-warn { background: rgba(187, 128, 9, 0.15); color: #d29922; }
-        .log-error { background: rgba(248, 81, 73, 0.15); color: #f85149; }
-        .thread-name { color: #8b949e; font-size: 11px; }
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .stat-card h3 { color: var(--text-secondary); font-size: 11px; text-transform: uppercase; margin-bottom: 8px; }
+        .stat-value { font-size: 24px; font-weight: 600; }
+        
+        .progress-bar { width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 3px; margin-top: 8px; }
+        .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+        .progress-low { background: var(--accent-green); }
+        .progress-medium { background: var(--accent-yellow); }
+        .progress-high { background: var(--accent-red); }
+        
+        .main-content { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        
+        @media (min-width: 1024px) {
+            .main-content { grid-template-columns: 2fr 1fr; }
+        }
+        
+        .panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            transition: border-color 0.3s ease;
+        }
+        
+        .panel-title { font-size: 14px; font-weight: 600; }
+        
+        .console-output {
+            height: 350px;
+            overflow-y: auto;
+            background: var(--console-bg);
+            padding: 12px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        .console-line { padding: 2px 0; word-break: break-all; }
+        .timestamp { color: var(--text-secondary); margin-right: 6px; }
+        .log-level { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; margin-right: 6px; min-width: 45px; text-align: center; }
+        .log-info { background: rgba(86, 140, 253, 0.15); color: var(--accent-blue); }
+        .log-warn { background: rgba(187, 128, 9, 0.15); color: var(--accent-yellow); }
+        .log-error { background: rgba(248, 81, 73, 0.15); color: var(--accent-red); }
+        .thread-name { color: var(--text-secondary); font-size: 10px; margin-right: 6px; }
         
         .mc-color-0 { color: var(--mc-black); }
         .mc-color-1 { color: var(--mc-dark-blue); }
@@ -200,56 +193,79 @@
         .mc-color-f { color: var(--mc-white); }
         .mc-bold { font-weight: bold; }
         
-        .command-input-wrapper {
-            display: flex;
-            gap: 10px;
-            padding: 15px;
-            border-top: 1px solid var(--border-color);
-        }
+        .command-input-wrapper { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border-color); }
         
         .command-input {
             flex: 1;
-            padding: 12px 16px;
+            padding: 10px 14px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             color: var(--text-primary);
             font-family: monospace;
+            font-size: 13px;
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
         
         .command-input:focus { outline: none; border-color: var(--accent-blue); }
         
-        .players-list { max-height: 250px; overflow-y: auto; }
-        .player-item { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid var(--border-color); }
+        .players-list { max-height: 200px; overflow-y: auto; }
+        .player-item { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid var(--border-color); transition: border-color 0.3s ease; }
         .player-item:last-child { border-bottom: none; }
-        .player-name { font-weight: 500; }
-        .player-ping { color: var(--text-secondary); font-size: 12px; }
+        .player-name { font-weight: 500; font-size: 13px; }
+        .player-ping { color: var(--text-secondary); font-size: 11px; }
         
-        .file-manager { padding: 20px; }
-        .breadcrumb { display: flex; gap: 8px; margin-bottom: 15px; padding: 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 13px; }
+        .file-manager { padding: 15px; }
+        .breadcrumb { display: flex; gap: 6px; margin-bottom: 12px; padding: 8px 12px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; transition: background 0.3s ease; }
         .breadcrumb-item { color: var(--accent-blue); cursor: pointer; }
         .breadcrumb-item:hover { text-decoration: underline; }
-        .file-toolbar { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .file-toolbar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
         .file-table { width: 100%; border-collapse: collapse; }
-        .file-table th, .file-table td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .file-table th { color: var(--text-secondary); font-size: 12px; text-transform: uppercase; }
-        .file-table tr:hover { background: var(--bg-tertiary); }
+        .file-table th, .file-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 12px; transition: border-color 0.3s ease; }
+        .file-table th { color: var(--text-secondary); font-size: 10px; text-transform: uppercase; font-weight: 600; }
+        .file-table tr:hover { background: var(--bg-tertiary); transition: background 0.2s ease; }
         .file-row { cursor: pointer; }
-        .file-folder { color: var(--mc-gold); }
-        .file-actions { display: flex; gap: 6px; }
-        .file-action-btn { padding: 4px 8px; background: transparent; border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-secondary); cursor: pointer; font-size: 11px; }
-        .file-action-btn:hover { background: var(--bg-tertiary); }
+        .file-folder { color: var(--mc-gold); margin-right: 6px; }
+        .file-actions { display: flex; gap: 4px; }
+        .file-action-btn { padding: 4px 8px; background: transparent; border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-secondary); cursor: pointer; font-size: 10px; transition: all 0.2s ease; }
+        .file-action-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
         
-        ::-webkit-scrollbar { width: 8px; }
+        /* Theme toggle switch */
+        .theme-toggle { position: relative; width: 50px; height: 26px; }
+        .theme-toggle input { opacity: 0; width: 0; height: 0; }
+        .theme-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-tertiary); border-radius: 26px; transition: 0.3s; border: 1px solid var(--border-color); }
+        .theme-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background: var(--text-primary); border-radius: 50%; transition: 0.3s; }
+        input:checked + .theme-slider { background: var(--accent-blue); }
+        input:checked + .theme-slider:before { transform: translateX(24px); }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-primary); }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        
+        /* Mobile responsive */
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .header { padding: 12px 15px; flex-direction: column; gap: 10px; text-align: center; }
+            .header h1 { font-size: 18px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-value { font-size: 20px; }
+            .command-input-wrapper { flex-direction: column; }
+            .panel-header { padding: 10px 12px; }
+            .console-output { height: 250px; font-size: 11px; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-terminal"></i> WebConsole Dashboard</h1>
-            <span id="connection-badge" class="status-badge status-connecting">Connecting...</span>
+            <h1><i class="fas fa-terminal"></i> WebConsole</h1>
+            <div class="header-actions">
+                <span id="connection-badge" class="status-badge status-connecting">Connecting...</span>
+                <label class="theme-toggle">
+                    <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+                    <span class="theme-slider"></span>
+                </label>
+            </div>
         </div>
         
         <div class="stats-grid">
@@ -280,15 +296,15 @@
                 <div class="panel-header">
                     <span class="panel-title"><i class="fas fa-terminal"></i> Console</span>
                     <div>
-                        <button class="btn" onclick="toggleConsole()"><i class="fas fa-eye"></i></button>
-                        <button class="btn" onclick="clearConsole()"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-icon" onclick="toggleConsole()"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-icon" onclick="clearConsole()"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
                 <div class="console-output" id="console-output">
                     <div class="console-line"><span class="timestamp">[System]</span> Connecting to server...</div>
                 </div>
                 <div class="command-input-wrapper">
-                    <input type="text" class="command-input" id="command-input" placeholder="Type command...">
+                    <input type="text" class="command-input" id="command-input" placeholder="Type command..." autocomplete="off">
                     <button class="btn btn-primary" onclick="sendCommand()"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -310,10 +326,10 @@
                     <div class="file-manager">
                         <div class="breadcrumb" id="file-breadcrumb"><span class="breadcrumb-item" onclick="navigateToRoot()">/</span></div>
                         <div class="file-toolbar">
-                            <button class="btn" onclick="goUp()"><i class="fas fa-arrow-up"></i></button>
-                            <button class="btn" onclick="refreshFiles()"><i class="fas fa-sync-alt"></i></button>
-                            <button class="btn btn-primary" onclick="showCreateFolder()"><i class="fas fa-folder-plus"></i></button>
-                            <button class="btn btn-primary" onclick="triggerUpload()"><i class="fas fa-upload"></i></button>
+                            <button class="btn btn-icon" onclick="goUp()" title="Up"><i class="fas fa-arrow-up"></i></button>
+                            <button class="btn btn-icon" onclick="refreshFiles()" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+                            <button class="btn btn-primary btn-icon" onclick="showCreateFolder()" title="New Folder"><i class="fas fa-folder-plus"></i></button>
+                            <button class="btn btn-primary btn-icon" onclick="triggerUpload()" title="Upload"><i class="fas fa-upload"></i></button>
                             <input type="file" id="file-upload" style="display: none;" multiple onchange="handleUpload(this)">
                         </div>
                         <table class="file-table">
@@ -331,6 +347,18 @@
         let currentPath = '';
         let serverDirectory = '';
         let isLoggedIn = false;
+        
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('webconsole-theme') || 'dark';
+            document.body.classList.toggle('light-mode', savedTheme === 'light');
+            document.getElementById('theme-toggle').checked = savedTheme === 'light';
+        }
+        
+        function toggleTheme() {
+            const isLight = document.body.classList.toggle('light-mode');
+            localStorage.setItem('webconsole-theme', isLight ? 'light' : 'dark');
+        }
         
         function connect() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -402,10 +430,10 @@
         
         function formatMcCodes(msg) {
             msg = msg.replace(/</g, '&lt;');
-            '0123456789abcdef'.split('').forEach((c, i) => {
+            '0123456789abcdef'.split('').forEach((c) => {
                 msg = msg.replace(new RegExp('§' + c, 'g'), '</span><span class="mc-color-' + c + '">');
             });
-            'lmnor'.split('').forEach(f => {
+            'lmnor'.split('').forEach((f) => {
                 msg = msg.replace(new RegExp('§' + f, 'g'), '</span><span class="' + (f === 'l' ? 'mc-bold' : '') + '">');
             });
             return '<span class="mc-color-f">' + msg + '</span>';
@@ -539,7 +567,7 @@
         
         function handleDownload(data) {
             const c = JSON.parse(data.content);
-            const blob = new Blob([new Uint8Array(atob(c.content).split('').map(c => c.charCodeAt(0)))]);
+            const blob = new Blob([new Uint8Array(atob(c.content).split('').map(c => c.charCodeAt(0))]);
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = c.filename;
@@ -565,12 +593,12 @@
         function triggerUpload() { document.getElementById('file-upload').click(); }
         
         function handleUpload(input) {
-            Array.from(input.files).forEach(file => {
+            Array.from(input.files).forEach((file, i) => {
                 const r = new FileReader();
                 r.onload = function(e) {
                     const path = currentPath === serverDirectory ? currentPath + file.name : currentPath + '/' + file.name;
                     ws.send(JSON.stringify({command: 'FILE_WRITE', params: JSON.stringify({path: path, content: e.target.result.split(',')[1]})}));
-                    if (file === input.files[input.files.length - 1]) refreshFiles();
+                    if (i === input.files.length - 1) refreshFiles();
                 };
                 r.readAsDataURL(file);
             });
@@ -583,6 +611,8 @@
         
         function clearConsole() { document.getElementById('console-output').innerHTML = ''; }
         
+        // Initialize
+        initTheme();
         connect();
         loadFiles('');
     </script>
